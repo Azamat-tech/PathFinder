@@ -9,7 +9,7 @@ namespace Path_Finder
 {
     enum Cell
     { 
-        empty, wall, start, end
+        EMPTY, WALL, START, END
     }
     class Board
     {
@@ -38,8 +38,8 @@ namespace Path_Finder
 
         public Board()
         {
-            grid[startPosition.y, startPosition.x] = start;
-            grid[endPosition.y, endPosition.x] = end;
+            grid[startPosition.y, startPosition.x] = START;
+            grid[endPosition.y, endPosition.x] = END;
         }
 
         public bool InsideTheBoard(int posX, int posY)
@@ -53,47 +53,74 @@ namespace Path_Finder
 
         public bool IsValidCell(int posX, int posY)
         {
-            if ((startPosition.x == posX && startPosition.y == posY) || (endPosition.x == posX && endPosition.y == posY))
+            if (IsStartPosition(posX, posY) || IsEndPosition(posX, posY))
             {
                 return false;
             }
             return true;
         }
 
+        public bool IsStartPosition(int posX, int posY)
+        {
+            if(startPosition.x == posX && startPosition.y == posY)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool IsEndPosition(int posX, int posY)
+        {
+            if (endPosition.x == posX && endPosition.y == posY)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool IsWall(int posX, int posY)
+        {
+            if (grid[posY, posX] == WALL)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public void SetStartPosition(int posX, int posY)
         {
-            if(IsValidCell(posX, posY))
+            if(IsValidCell(posX, posY) && !IsWall(posX, posY))
             {
-                grid[posY, posX] = start;
-                grid[startPosition.y, startPosition.x] = empty;
+                grid[posY, posX] = START;
+                grid[startPosition.y, startPosition.x] = EMPTY;
                 startPosition = new Position(posX, posY);
             }
         }
 
         public void SetEndPosition(int posX, int posY)
         {
-
+            if (IsValidCell(posX, posY) && !IsWall(posX, posY))
+            {
+                grid[posY, posX] = END;
+                grid[endPosition.y, endPosition.x] = EMPTY;
+                endPosition = new Position(posX, posY);
+            }
         }
 
-        public void SetWalls(int posX, int posY)
+        public void SetWall(int posX, int posY)
         {
             if(IsValidCell(posX, posY))
             {
-                if (grid[posY, posX] == wall)
-                {
-                    grid[posY, posX] = empty;
-                }
-                else
-                {
-                    grid[posY, posX] = wall;
-                }
+                grid[posY, posX] = WALL;
             } 
         }
 
-        public void DeleteAttribute(int posX, int posY)
+        public void RemoveWall(int posX, int posY)
         {
-            if (grid[posY, posX] == wall) grid[posY, posX] = empty;
+            if (grid[posY, posX] == WALL)
+            {
+                grid[posY, posX] = EMPTY;
+            }
         }
-
     }
 }

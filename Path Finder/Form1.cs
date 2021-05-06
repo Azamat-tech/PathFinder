@@ -17,12 +17,114 @@ namespace Path_Finder
     {
         readonly Pen pen = new Pen(Brushes.Black, 2);
         readonly StringFormat format = new StringFormat();
+
         readonly Board board = new Board();
-        public bool isMouseDown = false;
-        public bool isMouseMoving = false;
+
+        bool isMouseDown, isStartMoving, isEndMoving;
+        bool wallKeyDown, startKeyDown, endKeyDown, deleteKeyDown;
+
         public Form1()
         {
             InitializeComponent();
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if (Keys.S == e.KeyCode) 
+            { 
+                startKeyDown = true; 
+            }
+            else if (Keys.E == e.KeyCode) 
+            { 
+                endKeyDown = true; 
+            }
+            else if (Keys.Tab == e.KeyCode) 
+            { 
+                wallKeyDown = true; 
+            }
+            else if (Keys.Delete == e.KeyCode)
+            {
+                deleteKeyDown = true;
+            }
+        }
+
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            if (Keys.S == e.KeyCode)
+            {
+                startKeyDown = false;
+            }
+            else if (Keys.E == e.KeyCode)
+            {
+                endKeyDown = false;
+            }
+            else if (Keys.Tab == e.KeyCode)
+            {
+                wallKeyDown = false;
+            }
+            else if (Keys.Delete == e.KeyCode)
+            {
+                deleteKeyDown = false;
+            }
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            Position position = new Position((e.X - Board.MARGIN) / Board.SQUARE, (e.Y - Board.MARGIN) / Board.SQUARE);
+            if (board.InsideTheBoard(e.X, e.Y))
+            {
+                if (wallKeyDown)
+                {
+                    board.SetWall(position.x, position.y);
+                }
+                else if (startKeyDown)
+                {
+                    board.SetStartPosition(position.x, position.y);
+                }
+                else if (endKeyDown)
+                {
+                    board.SetEndPosition(position.x, position.y);
+                }
+                else if (deleteKeyDown)
+                {
+                    board.RemoveWall(position.x, position.y);
+                }
+                isMouseDown = true;
+                Invalidate();
+            }
+            
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            Position position = new Position((e.X - Board.MARGIN) / Board.SQUARE, (e.Y - Board.MARGIN) / Board.SQUARE);
+            if (isMouseDown && board.InsideTheBoard(e.X, e.Y))
+            {
+                /*
+                if(board.IsStartPosition(position.x, position.y) && !wallKeyDown)
+                {
+                    board.SetStartPosition(position.x, position.y);
+                }
+                if(isEndMoving)
+                {
+
+                }
+                */
+                if(wallKeyDown)
+                {
+                    board.SetWall(position.x, position.y);
+                }
+                if(deleteKeyDown)
+                {
+                    board.RemoveWall(position.x, position.y);
+                }
+                Invalidate();
+            }
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            isMouseDown = false;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -32,31 +134,6 @@ namespace Path_Finder
             DrawGrid(g);
             DrawStartAndEndPosition(g);
             DrawWalls(g);
-        }
-
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            if (board.InsideTheBoard(e.X, e.Y))
-            {
-                board.SetWalls((e.X - Board.MARGIN) / Board.SQUARE, (e.Y - Board.MARGIN) / Board.SQUARE);
-            }
-            isMouseDown = true;
-            Invalidate();
-        }
-
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            if(isMouseDown && board.InsideTheBoard(e.X, e.Y))
-            {
-                isMouseMoving = true;
-                board.SetWalls((e.X - Board.MARGIN) / Board.SQUARE, (e.Y - Board.MARGIN) / Board.SQUARE);
-                Invalidate();
-            }
-        }
-
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            isMouseDown = isMouseMoving = false;
         }
 
         public void DrawWalls(Graphics g)
@@ -74,6 +151,7 @@ namespace Path_Finder
                 }
             }
         }
+
         public void DrawStartAndEndPosition(Graphics g)
         {
             Font f = new Font("Georgia", 12);
