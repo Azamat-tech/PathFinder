@@ -100,21 +100,21 @@ namespace Path_Finder
             Position position = new Position((e.X - Board.MARGIN) / Board.SQUARE, (e.Y - Board.MARGIN) / Board.SQUARE);
             if (isMouseDown && board.InsideTheBoard(e.X, e.Y))
             {
-                /*
-                if(board.IsStartPosition(position.x, position.y) && !wallKeyDown)
+                if(board.IsStartPosition(position.x, position.y) || isStartMoving)
                 {
                     board.SetStartPosition(position.x, position.y);
+                    isStartMoving = true;
                 }
-                if(isEndMoving)
+                else if(board.IsEndPosition(position.x, position.y) || isEndMoving)
                 {
-
+                    board.SetEndPosition(position.x, position.y);
+                    isEndMoving = true;
                 }
-                */
-                if(wallKeyDown)
+                else if(wallKeyDown)
                 {
                     board.SetWall(position.x, position.y);
                 }
-                if(deleteKeyDown)
+                else if(deleteKeyDown)
                 {
                     board.RemoveWall(position.x, position.y);
                 }
@@ -124,7 +124,7 @@ namespace Path_Finder
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            isMouseDown = false;
+            isMouseDown = isStartMoving = isEndMoving = false;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -142,7 +142,7 @@ namespace Path_Finder
             {
                 for(int j = 0; j < Board.COLUMNSIZE; j++)
                 {
-                    if(board.grid[i,j] == Cell.wall)
+                    if(board.grid[i,j] == Cell.WALL)
                     {
                         g.FillRectangle(Brushes.Black, j * Board.SQUARE + Board.MARGIN,
                                         i * Board.SQUARE + Board.MARGIN, 
