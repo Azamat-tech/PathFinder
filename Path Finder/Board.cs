@@ -25,7 +25,6 @@ namespace Path_Finder
         public const int COLUMNSIZE = 75;
         public const int ROWSIZE = 35;
 
-        //
         public Cell[,] grid = new Cell[ROWSIZE, COLUMNSIZE];
 
         // Booleans for the Keys

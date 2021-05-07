@@ -15,17 +15,55 @@ namespace Path_Finder
     /// </summary>
     public partial class Form1 : Form
     {
-        readonly Pen pen = new Pen(Brushes.Black, 2);
-        readonly StringFormat format = new StringFormat();
+        private const int BUTTONMAZEWIDTH = 165;
+        private const int BUTTONALGORITHMWIDTH = 154;
+        private const int BUTTONHEIGHT = 60;
 
-        readonly Board board = new Board();
+        private readonly Pen pen = new Pen(Brushes.Black, 2);
+        private readonly StringFormat format = new StringFormat();
 
-        bool isMouseDown, isStartMoving, isEndMoving;
-        bool wallKeyDown, startKeyDown, endKeyDown, deleteKeyDown;
+        private readonly Board board = new Board();
+
+        private bool isMouseDown, isStartMoving, isEndMoving;
+        private bool wallKeyDown, startKeyDown, endKeyDown, deleteKeyDown;
+
+        private const string dfsName = "Depth-First Search";
+        private const string bfsName = "Breadth-First Search";
+        private const string dfsSmartName = "Depth-First Search (smart)";
+        private const string aStarName = "A*";
+        private const string dijkstraName = "Dijkstra";
+
+        private const string randomMazeName = "Random Maze";
+        private const string recursiveMazeNamze = "Recursive Maze";
 
         public Form1()
         {
             InitializeComponent();
+
+            // Create the algorithm buttons once the form is initialized
+            CreateButton(dfsName, 2 * Board.MARGIN, 2 * Board.MARGIN, BUTTONALGORITHMWIDTH, BUTTONHEIGHT);
+            CreateButton(bfsName, 2 * Board.MARGIN + (BUTTONALGORITHMWIDTH + Board.MARGIN), 2 * Board.MARGIN, BUTTONALGORITHMWIDTH, BUTTONHEIGHT);
+            CreateButton(dfsSmartName, 2 * Board.MARGIN + 2 * (BUTTONALGORITHMWIDTH + Board.MARGIN), 2 * Board.MARGIN, BUTTONALGORITHMWIDTH, BUTTONHEIGHT);
+            CreateButton(aStarName, 2 * Board.MARGIN + 3 * (BUTTONALGORITHMWIDTH + Board.MARGIN), 2 * Board.MARGIN, BUTTONALGORITHMWIDTH, BUTTONHEIGHT);
+            CreateButton(dijkstraName, 2 * Board.MARGIN + 4 * (BUTTONALGORITHMWIDTH + Board.MARGIN), 2 * Board.MARGIN, BUTTONALGORITHMWIDTH, BUTTONHEIGHT);
+
+            // Create the maze buttons once the form is initialized
+            CreateButton(randomMazeName, 800 + 2 * Board.MARGIN, 2 * Board.MARGIN, BUTTONMAZEWIDTH, BUTTONHEIGHT);
+            CreateButton(recursiveMazeNamze, 800 + 2 * Board.MARGIN + BUTTONMAZEWIDTH + 2 * Board.MARGIN, 2 * Board.MARGIN, BUTTONMAZEWIDTH, BUTTONHEIGHT);
+        }
+
+        private void CreateButton(string name, int posX, int posY, int width, int height)
+        {
+            Button button = new Button();
+            this.Controls.Add(button);
+            button.Name = name;
+            button.Text = name;
+            button.Location = new Point(posX, posY);
+            button.Height = height;
+            button.Width = width;
+            button.BackColor = Color.White;
+            button.ForeColor = Color.Black;
+            button.Font = new Font("Georgia", 12);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -68,10 +106,19 @@ namespace Path_Finder
             }
         }
 
+        private bool IsKeyPressed()
+        {
+            if (wallKeyDown || startKeyDown || endKeyDown || deleteKeyDown)
+            {
+                return true;
+            }
+            return false;
+        }
+
         protected override void OnMouseDown(MouseEventArgs e)
         {
             Position position = new Position((e.X - Board.MARGIN) / Board.SQUARE, (e.Y - Board.MARGIN) / Board.SQUARE);
-            if (board.InsideTheBoard(e.X, e.Y))
+            if (board.InsideTheBoard(e.X, e.Y) && IsKeyPressed())
             {
                 if (wallKeyDown)
                 {
@@ -132,8 +179,19 @@ namespace Path_Finder
             Graphics g = e.Graphics;
             DrawBoard(g);
             DrawGrid(g);
+
+            DrawToolBoxBorders(g);
+
             DrawStartAndEndPosition(g);
             DrawWalls(g);
+        }
+
+        public void DrawToolBoxBorders(Graphics g)
+        {
+            Rectangle algorithmBorder = new Rectangle(Board.MARGIN, Board.MARGIN, 800, Board.TOOLBOXHEIGHT);
+            Rectangle mazeBorder = new Rectangle(800 + Board.MARGIN, Board.MARGIN, 350, Board.TOOLBOXHEIGHT);
+            g.DrawRectangle(pen, algorithmBorder);
+            g.DrawRectangle(pen, mazeBorder);
         }
 
         public void DrawWalls(Graphics g)
