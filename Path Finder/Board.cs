@@ -62,7 +62,7 @@ namespace Path_Finder
 
         public bool IsStartPosition(int posX, int posY)
         {
-            if(startPosition.x == posX && startPosition.y == posY)
+            if(startPosition == new Position(posX, posY))
             {
                 return true;
             }
@@ -71,7 +71,7 @@ namespace Path_Finder
 
         public bool IsEndPosition(int posX, int posY)
         {
-            if (endPosition.x == posX && endPosition.y == posY)
+            if (endPosition == new Position(posX, posY))
             {
                 return true;
             }
