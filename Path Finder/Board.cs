@@ -31,6 +31,8 @@ namespace Path_Finder
         public bool startKeyDown = true;
         public bool endKeyDown = true;
 
+        public Position previousPosition = new Position(0, 0);
+
         // Start and End Position
         public Position startPosition = new Position(15,18);
         public Position endPosition = new Position(60, 18);
@@ -86,6 +88,16 @@ namespace Path_Finder
             return false;
         }
 
+        public bool IsEmpty(int posX, int posY)
+        {
+            if(grid[posY, posX] == EMPTY)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
         public void SetStartPosition(int posX, int posY)
         {
             if(IsValidCell(posX, posY) && !IsWall(posX, posY))
@@ -106,20 +118,41 @@ namespace Path_Finder
             }
         }
 
-        public void SetWall(int posX, int posY)
+        public void SetWall(int posX, int posY, bool justPress = true)
         {
             if(IsValidCell(posX, posY))
             {
-                grid[posY, posX] = WALL;
-            } 
+                if (justPress)
+                {
+                    grid[posY, posX] = WALL;
+                }
+                else
+                {
+                    if (previousPosition.x != posX || previousPosition.y != posY)
+                    {
+                        previousPosition = new Position(posX, posY);
+                        grid[posY, posX] = WALL;
+                    }
+                }
+            }
         }
 
-        public void RemoveWall(int posX, int posY)
+        public void RemoveWall(int posX, int posY, bool justPress = true)
         {
             if (grid[posY, posX] == WALL)
             {
-                grid[posY, posX] = EMPTY;
-            }
+                if(justPress)
+                {
+                    grid[posY, posX] = EMPTY;
+                }else
+                {
+                    if(previousPosition.x != posX || previousPosition.y != posY)
+                    {
+                        previousPosition = new Position(posX, posY);
+                        grid[posY, posX] = EMPTY;
+                    }
+                }
+            } 
         }
     }
 }

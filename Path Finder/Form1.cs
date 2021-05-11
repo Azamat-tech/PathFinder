@@ -15,23 +15,28 @@ namespace Path_Finder
     /// </summary>
     public partial class Form1 : Form
     {
-        private const int BUTTONMAZEWIDTH = 165;
-        private const int BUTTONALGORITHMWIDTH = 154;
-        private const int BUTTONHEIGHT = 60;
+        private const int BUTTONWIDTH = 120;
+        private const int BUTTONHEIGHT = 50;
 
-        private readonly Pen pen = new Pen(Brushes.Black, 2);
+        private const int LABELWIDTH = 100;
+        private const int LABELHEIGHT = 40;
+
+        private readonly Pen pen = new Pen(Brushes.Gray, 2);
         private readonly StringFormat format = new StringFormat();
-
+        private readonly Font font = new Font("Times New Roman", 11);
         private readonly Board board = new Board();
 
-        private bool isMouseDown, isStartMoving, isEndMoving;
-        private bool wallKeyDown, startKeyDown, endKeyDown, deleteKeyDown;
+        private bool isMouseDown, isStartMoving, isEndMoving, isWallMoving;
 
-        private const string dfsName = "Depth-First Search";
-        private const string bfsName = "Breadth-First Search";
-        private const string dfsSmartName = "Depth-First Search (smart)";
-        private const string aStarName = "A*";
-        private const string dijkstraName = "Dijkstra";
+        private const string startingNodeName = "Starting Node: ";
+        private const string targetNodeName = "Target Node: ";
+        private const string bombNodeName = "Bomb Node: ";
+        private const string unvisitedNodeName = "Unvisited Node: ";
+        private const string visitedNodeName = "Visited Node: ";
+        private const string shortestPathNodeName = "Shortest-Path Node: ";
+
+        private const string visualizeName = "Visulize";
+        private const string addDropOffName = "Bomb";
 
         private const string randomMazeName = "Random Maze";
         private const string recursiveMazeNamze = "Recursive Maze";
@@ -40,18 +45,73 @@ namespace Path_Finder
         {
             InitializeComponent();
 
-            // Create the algorithm buttons once the form is initialized
-            CreateButton(dfsName, 2 * Board.MARGIN, 2 * Board.MARGIN, BUTTONALGORITHMWIDTH, BUTTONHEIGHT);
-            CreateButton(bfsName, 2 * Board.MARGIN + (BUTTONALGORITHMWIDTH + Board.MARGIN), 2 * Board.MARGIN, BUTTONALGORITHMWIDTH, BUTTONHEIGHT);
-            CreateButton(dfsSmartName, 2 * Board.MARGIN + 2 * (BUTTONALGORITHMWIDTH + Board.MARGIN), 2 * Board.MARGIN, BUTTONALGORITHMWIDTH, BUTTONHEIGHT);
-            CreateButton(aStarName, 2 * Board.MARGIN + 3 * (BUTTONALGORITHMWIDTH + Board.MARGIN), 2 * Board.MARGIN, BUTTONALGORITHMWIDTH, BUTTONHEIGHT);
-            CreateButton(dijkstraName, 2 * Board.MARGIN + 4 * (BUTTONALGORITHMWIDTH + Board.MARGIN), 2 * Board.MARGIN, BUTTONALGORITHMWIDTH, BUTTONHEIGHT);
+            ToolStripMenuItem[] algorithms =
+            {
+                new ToolStripMenuItem("Breadth-First Search", null),
+                new ToolStripMenuItem("Depth-First Search", null),
+                new ToolStripMenuItem("Depth-First Search Smart", null),
+                new ToolStripMenuItem("A* Search", null),
+                new ToolStripMenuItem("Dijhstra's Algorithm", null),
+            };
 
-            // Create the maze buttons once the form is initialized
-            CreateButton(randomMazeName, 800 + 2 * Board.MARGIN, 2 * Board.MARGIN, BUTTONMAZEWIDTH, BUTTONHEIGHT);
-            CreateButton(recursiveMazeNamze, 800 + 2 * Board.MARGIN + BUTTONMAZEWIDTH + 2 * Board.MARGIN, 2 * Board.MARGIN, BUTTONMAZEWIDTH, BUTTONHEIGHT);
+            ToolStripMenuItem[] mazeGenerators =
+            {
+                new ToolStripMenuItem("Random Maze", null),
+                new ToolStripMenuItem("Recursive Division", null),
+            };
+
+            ToolStripMenuItem[] mainItems =
+            {
+                new ToolStripMenuItem("Algorithms", null, algorithms),
+                new ToolStripMenuItem("Maze & Pattern", null, mazeGenerators),
+            };
+
+            MenuStrip menu = new MenuStrip();
+
+            foreach (ToolStripMenuItem item in mainItems)
+            {
+                menu.Items.Add(item);
+            }
+            
+            Controls.Add(menu);
+
+            CreateButton(addDropOffName, 1250, Board.MARGIN + Board.SQUARE + 2, BUTTONWIDTH, BUTTONHEIGHT);
+
+            CreateButton(visualizeName, 1380, Board.MARGIN + Board.SQUARE + 2, BUTTONWIDTH, BUTTONHEIGHT);
+
+            CreateTextLabel(startingNodeName, 2 * Board.MARGIN, 2 * Board.SQUARE + Board.MARGIN, 
+                                            LABELWIDTH, LABELHEIGHT);
+
+            CreateTextLabel(targetNodeName, 3 * Board.MARGIN + Board.SQUARE + LABELWIDTH, 
+                                            2 * Board.SQUARE + Board.MARGIN, LABELWIDTH, LABELHEIGHT);
+            
+            CreateTextLabel(bombNodeName, 4 * Board.MARGIN + 2 * Board.SQUARE + 2 * LABELWIDTH, 
+                                            2 * Board.SQUARE + Board.MARGIN, LABELWIDTH, LABELHEIGHT);
+            
+            CreateTextLabel(unvisitedNodeName, 5 * Board.MARGIN + 3 * Board.SQUARE + 3 * LABELWIDTH,
+                                            2 * Board.SQUARE + Board.MARGIN, LABELWIDTH, LABELHEIGHT);
+            
+            CreateTextLabel(visitedNodeName, 7 * Board.MARGIN + 4 * Board.SQUARE + 4 * LABELWIDTH,
+                                            2 * Board.SQUARE + Board.MARGIN, LABELWIDTH, LABELHEIGHT);
+            
+            CreateTextLabel(shortestPathNodeName, 10 * Board.MARGIN + 6 * Board.SQUARE + 5 * LABELWIDTH,
+                                            2 * Board.SQUARE + Board.MARGIN, LABELWIDTH, LABELHEIGHT);
+
+
         }
 
+        private void CreateTextLabel(string name, int posX, int posY, int width, int height)
+        {
+            Label label = new Label();
+            this.Controls.Add(label);
+            label.Name = name;
+            label.Text = name;
+            label.Location = new Point(posX, posY);
+            label.Height = height;
+            label.Width = width;
+            label.Font = font;
+            label.AutoSize = true;
+        }
         private void CreateButton(string name, int posX, int posY, int width, int height)
         {
             Button button = new Button();
@@ -64,106 +124,57 @@ namespace Path_Finder
             button.BackColor = Color.White;
             button.ForeColor = Color.Black;
             button.Font = new Font("Georgia", 12);
+
+
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (Keys.S == e.KeyCode) 
-            { 
-                startKeyDown = true; 
-            }
-            else if (Keys.E == e.KeyCode) 
-            { 
-                endKeyDown = true; 
-            }
-            else if (Keys.Tab == e.KeyCode) 
-            { 
-                wallKeyDown = true; 
-            }
-            else if (Keys.Delete == e.KeyCode)
-            {
-                deleteKeyDown = true;
-            }
-        }
 
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            if (Keys.S == e.KeyCode)
-            {
-                startKeyDown = false;
-            }
-            else if (Keys.E == e.KeyCode)
-            {
-                endKeyDown = false;
-            }
-            else if (Keys.Tab == e.KeyCode)
-            {
-                wallKeyDown = false;
-            }
-            else if (Keys.Delete == e.KeyCode)
-            {
-                deleteKeyDown = false;
-            }
-        }
-
-        private bool IsKeyPressed()
-        {
-            if (wallKeyDown || startKeyDown || endKeyDown || deleteKeyDown)
-            {
-                return true;
-            }
-            return false;
-        }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
             Position position = new Position((e.X - Board.MARGIN) / Board.SQUARE, (e.Y - Board.MARGIN) / Board.SQUARE);
-            if (board.InsideTheBoard(e.X, e.Y) && IsKeyPressed())
+            
+            if (board.InsideTheBoard(e.X, e.Y))
             {
-                if (wallKeyDown)
+                if(board.IsEmpty(position.x, position.y))
                 {
                     board.SetWall(position.x, position.y);
+                    Invalidate();
                 }
-                else if (startKeyDown)
-                {
-                    board.SetStartPosition(position.x, position.y);
-                }
-                else if (endKeyDown)
-                {
-                    board.SetEndPosition(position.x, position.y);
-                }
-                else if (deleteKeyDown)
+                else if(board.IsWall(position.x, position.y))
                 {
                     board.RemoveWall(position.x, position.y);
+                    Invalidate();
                 }
                 isMouseDown = true;
-                Invalidate();
             }
-            
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
             Position position = new Position((e.X - Board.MARGIN) / Board.SQUARE, (e.Y - Board.MARGIN) / Board.SQUARE);
+            
             if (isMouseDown && board.InsideTheBoard(e.X, e.Y))
             {
-                if(board.IsStartPosition(position.x, position.y) || isStartMoving)
+                if (board.IsEmpty(position.x, position.y) && !(isStartMoving || isEndMoving))
+                {
+                    board.SetWall(position.x, position.y, false);
+                    isWallMoving = true;
+                }
+                else if (board.IsWall(position.x, position.y) && !(isStartMoving || isEndMoving))
+                {
+                    board.RemoveWall(position.x, position.y, false);
+                }
+                else if ((board.IsStartPosition(position.x, position.y) || isStartMoving) && !isWallMoving)
                 {
                     board.SetStartPosition(position.x, position.y);
                     isStartMoving = true;
+                    
                 }
-                else if(board.IsEndPosition(position.x, position.y) || isEndMoving)
+                else if ((board.IsEndPosition(position.x, position.y) || isEndMoving) && !isWallMoving)
                 {
                     board.SetEndPosition(position.x, position.y);
                     isEndMoving = true;
-                }
-                else if(wallKeyDown)
-                {
-                    board.SetWall(position.x, position.y);
-                }
-                else if(deleteKeyDown)
-                {
-                    board.RemoveWall(position.x, position.y);
                 }
                 Invalidate();
             }
@@ -171,30 +182,36 @@ namespace Path_Finder
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            isMouseDown = isStartMoving = isEndMoving = false;
+            isMouseDown = isStartMoving = isEndMoving = isWallMoving = false;
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
             DrawBoard(g);
+
             DrawGrid(g);
 
-            DrawToolBoxBorders(g);
+            DrawToolBoxBorders(g, new Position(7 * BUTTONWIDTH - Board.MARGIN, Board.MARGIN + Board.SQUARE), 
+                    new Position(7 * BUTTONWIDTH - Board.MARGIN, Board.MARGIN + Board.SQUARE + Board.TOOLBOXHEIGHT - Board.SQUARE + Board.MARGIN));
 
-            DrawStartAndEndPosition(g);
+            DrawToolBoxItems(g);
+
+            DrawStartPosition(g, board.startPosition.x * Board.SQUARE + Board.MARGIN,
+                                       board.startPosition.y * Board.SQUARE + Board.MARGIN);
+
+            DrawEndPosition(g, board.endPosition.x * Board.SQUARE + Board.MARGIN,
+                              board.endPosition.y * Board.SQUARE + Board.MARGIN);
+
             DrawWalls(g);
         }
 
-        public void DrawToolBoxBorders(Graphics g)
+        private void DrawToolBoxBorders(Graphics g, Position from, Position to)
         {
-            Rectangle algorithmBorder = new Rectangle(Board.MARGIN, Board.MARGIN, 800, Board.TOOLBOXHEIGHT);
-            Rectangle mazeBorder = new Rectangle(800 + Board.MARGIN, Board.MARGIN, 350, Board.TOOLBOXHEIGHT);
-            g.DrawRectangle(pen, algorithmBorder);
-            g.DrawRectangle(pen, mazeBorder);
+            g.DrawLine(pen, from.x, from.y, to.x, to.y);
         }
 
-        public void DrawWalls(Graphics g)
+        private void DrawWalls(Graphics g)
         {
             for(int i = 0; i < Board.ROWSIZE; i++)
             {
@@ -210,26 +227,86 @@ namespace Path_Finder
             }
         }
 
-        public void DrawStartAndEndPosition(Graphics g)
+        private void DrawToolBoxItems(Graphics g)
         {
-            Font f = new Font("Georgia", 12);
             format.LineAlignment = StringAlignment.Center;
             format.Alignment = StringAlignment.Center;
-            Rectangle startRectangle = new Rectangle(board.startPosition.x * Board.SQUARE + Board.MARGIN,
-                                                     board.startPosition.y * Board.SQUARE + Board.MARGIN,
-                                                     Board.SQUARE, Board.SQUARE);
-            Rectangle endPosition = new Rectangle(board.endPosition.x * Board.SQUARE + Board.MARGIN,
-                                                  board.endPosition.y * Board.SQUARE + Board.MARGIN,
-                                                  Board.SQUARE, Board.SQUARE);
-            g.FillRectangle(Brushes.Aqua, startRectangle);
-            g.DrawString("S", f, Brushes.Black, startRectangle, format);
 
-            g.FillRectangle(Brushes.Lime, endPosition);
-            g.DrawString("E", f, Brushes.Black, endPosition, format);
-            f.Dispose();
+            DrawStartPosition(g, Board.MARGIN + 1 + LABELWIDTH, 2 * Board.SQUARE + 4);
+            DrawEndPosition(g, Board.MARGIN + 2 * LABELWIDTH + Board.SQUARE, 2 * Board.SQUARE + 4);
+
+            DrawEllipseRectange(g, 2 * Board.MARGIN + 3 * LABELWIDTH + 2 * Board.SQUARE, 2 * Board.SQUARE + 4);
+            DrawUnvisitedNode(g, 2 * Board.MARGIN + 1 + 4 * LABELWIDTH + 4 * Board.SQUARE, 2 * Board.SQUARE + 4);
+
+            DrawVisitedNodes(g, 2 * Board.MARGIN + 5 * LABELWIDTH + 5 * Board.SQUARE, 2 * Board.SQUARE + 4);
+            DrawVisitedNodes(g, 3 * Board.MARGIN + 5 * LABELWIDTH + 6 * Board.SQUARE, 2 * Board.SQUARE + 4, isFirstDestination:false);
+
+            DrawShortestPathNode(g, 4 * Board.MARGIN + 6 * LABELWIDTH + 9 * Board.SQUARE, 2 * Board.SQUARE + 4);
         }
 
-        public void DrawBoard(Graphics g)
+        private void DrawShortestPathNode(Graphics g, int posX, int posY)
+        {
+            Rectangle path = new Rectangle(posX, posY, Board.SQUARE, Board.SQUARE);
+            g.FillRectangle(Brushes.Yellow, path);
+        }
+
+        private void DrawVisitedNodes(Graphics g, int posX, int PosY, bool isFirstDestination = true)
+        {
+            Rectangle visited = new Rectangle(posX, PosY, Board.SQUARE, Board.SQUARE);
+            if (isFirstDestination)
+            {
+                g.FillRectangle(Brushes.Aqua, visited);
+            }
+            else
+            {
+                g.FillRectangle(Brushes.MediumOrchid, visited);
+            }
+        }
+
+        private void DrawUnvisitedNode(Graphics g, int posX, int posY)
+        {
+            pen.Alignment = System.Drawing.Drawing2D.PenAlignment.Inset;
+
+            Rectangle unvisitedNode = new Rectangle(posX, posY, Board.SQUARE, Board.SQUARE);
+            
+            g.DrawRectangle(pen, unvisitedNode);
+        }
+
+        private void DrawEllipseRectange(Graphics g, int posX, int posY)
+        {
+            Pen extraPen = new Pen(Brushes.Purple, 3);
+            Pen extraInnerPen = new Pen(Brushes.Purple, 4);
+
+            Rectangle circle = new Rectangle(posX - 1, posY - 1, Board.SQUARE - 1, Board.SQUARE - 1);
+            Rectangle innerCircle = new Rectangle(posX + Board.MARGIN + 1, posY + Board.MARGIN + 1, Board.MARGIN, Board.MARGIN);
+            
+            g.DrawEllipse(extraPen, circle);
+            g.DrawEllipse(extraInnerPen, innerCircle);
+        }
+
+        private void DrawStartPosition(Graphics g, int posX, int posY)
+        {
+            format.LineAlignment = StringAlignment.Center;
+            format.Alignment = StringAlignment.Center;
+
+            Rectangle startRectangle = new Rectangle(posX, posY, Board.SQUARE, Board.SQUARE);
+
+            g.FillRectangle(Brushes.Aqua, startRectangle);
+            g.DrawString("S", font, Brushes.Black, startRectangle, format);
+        }
+
+        private void DrawEndPosition(Graphics g, int posX, int posY)
+        {
+            format.LineAlignment = StringAlignment.Center;
+            format.Alignment = StringAlignment.Center;
+
+            Rectangle endRectangle = new Rectangle(posX, posY, Board.SQUARE, Board.SQUARE);
+
+            g.FillRectangle(Brushes.Lime, endRectangle);
+            g.DrawString("E", font, Brushes.Black, endRectangle, format);
+        }
+
+        private void DrawBoard(Graphics g)
         {
             Rectangle boardOutLine = new Rectangle(
                                 0, 0,
@@ -238,9 +315,9 @@ namespace Path_Finder
                                 );
 
             Rectangle toolBoxOutLine = new Rectangle( 
-                                Board.MARGIN, Board.MARGIN, 
+                                Board.MARGIN, Board.MARGIN + Board.SQUARE, 
                                 Board.TOOLBOXWIDTH,
-                                Board.TOOLBOXHEIGHT
+                                Board.TOOLBOXHEIGHT - Board.SQUARE + Board.MARGIN
                                 );
 
             Rectangle gridOutLine = new Rectangle(
@@ -256,7 +333,7 @@ namespace Path_Finder
        
         }
 
-        public void DrawGrid(Graphics g)
+        private void DrawGrid(Graphics g)
         {
             for (int x = 5; x <= Board.SQUARE * Board.COLUMNSIZE; x += Board.SQUARE)
             {
