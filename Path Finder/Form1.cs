@@ -31,12 +31,13 @@ namespace Path_Finder
         private const string startingNodeName = "Starting Node: ";
         private const string targetNodeName = "Target Node: ";
         private const string bombNodeName = "Bomb Node: ";
-        private const string unvisitedNodeName = "Unvisited Node: ";
+        private const string wallNodeName = "Wall Node: ";
         private const string visitedNodeName = "Visited Node: ";
         private const string shortestPathNodeName = "Shortest-Path Node: ";
 
+        private const string clearBoardName = "Clear Board";
         private const string visualizeName = "Visulize";
-        private const string addDropOffName = "Bomb";
+        private const string addBombName = "Bomb";
 
         private const string randomMazeName = "Random Maze";
         private const string recursiveMazeNamze = "Recursive Maze";
@@ -75,9 +76,14 @@ namespace Path_Finder
             
             Controls.Add(menu);
 
-            CreateButton(addDropOffName, 1250, Board.MARGIN + Board.SQUARE + 2, BUTTONWIDTH, BUTTONHEIGHT);
+            CreateButton(clearBoardName, 9 * BUTTONWIDTH + 3 * Board.SQUARE, Board.MARGIN + Board.SQUARE + 2,
+                                                                                        BUTTONWIDTH, BUTTONHEIGHT);
 
-            CreateButton(visualizeName, 1380, Board.MARGIN + Board.SQUARE + 2, BUTTONWIDTH, BUTTONHEIGHT);
+            CreateButton(addBombName, 10 * BUTTONWIDTH + 3 * Board.SQUARE, Board.MARGIN + Board.SQUARE + 2, 
+                                                                              BUTTONWIDTH, BUTTONHEIGHT);
+
+            CreateButton(visualizeName, 11 * BUTTONWIDTH + 3 * Board.SQUARE, Board.MARGIN + Board.SQUARE + 2, 
+                                                                              BUTTONWIDTH, BUTTONHEIGHT);
 
             CreateTextLabel(startingNodeName, 2 * Board.MARGIN, 2 * Board.SQUARE + Board.MARGIN, 
                                             LABELWIDTH, LABELHEIGHT);
@@ -85,16 +91,16 @@ namespace Path_Finder
             CreateTextLabel(targetNodeName, 3 * Board.MARGIN + Board.SQUARE + LABELWIDTH, 
                                             2 * Board.SQUARE + Board.MARGIN, LABELWIDTH, LABELHEIGHT);
             
-            CreateTextLabel(bombNodeName, 4 * Board.MARGIN + 2 * Board.SQUARE + 2 * LABELWIDTH, 
+            CreateTextLabel(bombNodeName, 3 * Board.MARGIN + 2 * Board.SQUARE + 2 * LABELWIDTH, 
                                             2 * Board.SQUARE + Board.MARGIN, LABELWIDTH, LABELHEIGHT);
             
-            CreateTextLabel(unvisitedNodeName, 5 * Board.MARGIN + 3 * Board.SQUARE + 3 * LABELWIDTH,
+            CreateTextLabel(wallNodeName, 3 * Board.MARGIN + 3 * Board.SQUARE + 3 * LABELWIDTH,
                                             2 * Board.SQUARE + Board.MARGIN, LABELWIDTH, LABELHEIGHT);
             
-            CreateTextLabel(visitedNodeName, 7 * Board.MARGIN + 4 * Board.SQUARE + 4 * LABELWIDTH,
+            CreateTextLabel(visitedNodeName, Board.MARGIN + 4 * Board.SQUARE + 4 * LABELWIDTH,
                                             2 * Board.SQUARE + Board.MARGIN, LABELWIDTH, LABELHEIGHT);
             
-            CreateTextLabel(shortestPathNodeName, 10 * Board.MARGIN + 6 * Board.SQUARE + 5 * LABELWIDTH,
+            CreateTextLabel(shortestPathNodeName, 8 * Board.MARGIN + 5 * Board.SQUARE + 5 * LABELWIDTH,
                                             2 * Board.SQUARE + Board.MARGIN, LABELWIDTH, LABELHEIGHT);
 
 
@@ -125,10 +131,36 @@ namespace Path_Finder
             button.ForeColor = Color.Black;
             button.Font = new Font("Georgia", 12);
 
+            if (name == clearBoardName)
+            {
+                button.Click += new EventHandler(ClearBoard);
+            }
+            else if (name == addBombName)
+            {
 
+            }else if (name == visualizeName)
+            {
+
+            }
         }
 
+        private void ClearBoard(Object sender, EventArgs args)
+        {
+            board.ClearBoard();
+            Invalidate();
+        }
 
+        private void AddBomb(Object sender, EventArgs args)
+        {
+            if(board.IsBombSet())
+            {
+                board.RemoveBomb();
+            }
+            else
+            {
+                board.AddBomb();
+            }
+        }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
@@ -156,24 +188,29 @@ namespace Path_Finder
             
             if (isMouseDown && board.InsideTheBoard(e.X, e.Y))
             {
-                if (board.IsEmpty(position.x, position.y) && !(isStartMoving || isEndMoving))
+                if (board.IsEmpty(position.x, position.y))
                 {
                     board.SetWall(position.x, position.y, false);
                     isWallMoving = true;
                 }
-                else if (board.IsWall(position.x, position.y) && !(isStartMoving || isEndMoving))
+                else if (board.IsWall(position.x, position.y))
                 {
                     board.RemoveWall(position.x, position.y, false);
                 }
                 else if ((board.IsStartPosition(position.x, position.y) || isStartMoving) && !isWallMoving)
                 {
-                    board.SetStartPosition(position.x, position.y);
+                    if(isStartMoving)
+                    {
+                        board.SetStartPosition(position.x, position.y);
+                    }
                     isStartMoving = true;
-                    
                 }
                 else if ((board.IsEndPosition(position.x, position.y) || isEndMoving) && !isWallMoving)
                 {
-                    board.SetEndPosition(position.x, position.y);
+                    if (isEndMoving)
+                    {
+                        board.SetEndPosition(position.x, position.y);
+                    }
                     isEndMoving = true;
                 }
                 Invalidate();
@@ -192,16 +229,16 @@ namespace Path_Finder
 
             DrawGrid(g);
 
-            DrawToolBoxBorders(g, new Position(7 * BUTTONWIDTH - Board.MARGIN, Board.MARGIN + Board.SQUARE), 
-                    new Position(7 * BUTTONWIDTH - Board.MARGIN, Board.MARGIN + Board.SQUARE + Board.TOOLBOXHEIGHT - Board.SQUARE + Board.MARGIN));
+            DrawToolBoxBorders(g, new Position(7 * BUTTONWIDTH - 2 * Board.SQUARE, Board.MARGIN + Board.SQUARE), 
+                    new Position(7 * BUTTONWIDTH - 2 * Board.SQUARE, Board.MARGIN + Board.SQUARE + Board.TOOLBOXHEIGHT - Board.SQUARE + Board.MARGIN));
 
             DrawToolBoxItems(g);
 
-            DrawStartPosition(g, board.startPosition.x * Board.SQUARE + Board.MARGIN,
-                                       board.startPosition.y * Board.SQUARE + Board.MARGIN);
+            DrawStartPosition(g, board.GetStartingPosition().x * Board.SQUARE + Board.MARGIN,
+                                       board.GetStartingPosition().y * Board.SQUARE + Board.MARGIN);
 
-            DrawEndPosition(g, board.endPosition.x * Board.SQUARE + Board.MARGIN,
-                              board.endPosition.y * Board.SQUARE + Board.MARGIN);
+            DrawEndPosition(g, board.GetEndPosition().x * Board.SQUARE + Board.MARGIN,
+                              board.GetEndPosition().y * Board.SQUARE + Board.MARGIN);
 
             DrawWalls(g);
         }
@@ -213,11 +250,12 @@ namespace Path_Finder
 
         private void DrawWalls(Graphics g)
         {
+            Cell[,] grid = board.GetGrid();
             for(int i = 0; i < Board.ROWSIZE; i++)
             {
                 for(int j = 0; j < Board.COLUMNSIZE; j++)
                 {
-                    if(board.grid[i,j] == Cell.WALL)
+                    if(grid[i,j] == Cell.WALL)
                     {
                         g.FillRectangle(Brushes.Black, j * Board.SQUARE + Board.MARGIN,
                                         i * Board.SQUARE + Board.MARGIN, 
@@ -235,13 +273,13 @@ namespace Path_Finder
             DrawStartPosition(g, Board.MARGIN + 1 + LABELWIDTH, 2 * Board.SQUARE + 4);
             DrawEndPosition(g, Board.MARGIN + 2 * LABELWIDTH + Board.SQUARE, 2 * Board.SQUARE + 4);
 
-            DrawEllipseRectange(g, 2 * Board.MARGIN + 3 * LABELWIDTH + 2 * Board.SQUARE, 2 * Board.SQUARE + 4);
-            DrawUnvisitedNode(g, 2 * Board.MARGIN + 1 + 4 * LABELWIDTH + 4 * Board.SQUARE, 2 * Board.SQUARE + 4);
+            DrawEllipseRectange(g, Board.MARGIN + 3 * LABELWIDTH + 2 * Board.SQUARE, 2 * Board.SQUARE + 4);
+            DrawWallNode(g, 3 * Board.MARGIN + 4 * LABELWIDTH + 2 * Board.SQUARE, 2 * Board.SQUARE + 4);
 
-            DrawVisitedNodes(g, 2 * Board.MARGIN + 5 * LABELWIDTH + 5 * Board.SQUARE, 2 * Board.SQUARE + 4);
-            DrawVisitedNodes(g, 3 * Board.MARGIN + 5 * LABELWIDTH + 6 * Board.SQUARE, 2 * Board.SQUARE + 4, isFirstDestination:false);
+            DrawVisitedNodes(g, 5 * LABELWIDTH + 4 * Board.SQUARE, 2 * Board.SQUARE + 4);
+            DrawVisitedNodes(g, Board.MARGIN + 5 * LABELWIDTH + 5 * Board.SQUARE, 2 * Board.SQUARE + 4, isFirstDestination:false);
 
-            DrawShortestPathNode(g, 4 * Board.MARGIN + 6 * LABELWIDTH + 9 * Board.SQUARE, 2 * Board.SQUARE + 4);
+            DrawShortestPathNode(g, 2 * Board.MARGIN + 6 * LABELWIDTH + 8 * Board.SQUARE, 2 * Board.SQUARE + 4);
         }
 
         private void DrawShortestPathNode(Graphics g, int posX, int posY)
@@ -263,13 +301,11 @@ namespace Path_Finder
             }
         }
 
-        private void DrawUnvisitedNode(Graphics g, int posX, int posY)
+        private void DrawWallNode(Graphics g, int posX, int posY)
         {
-            pen.Alignment = System.Drawing.Drawing2D.PenAlignment.Inset;
-
             Rectangle unvisitedNode = new Rectangle(posX, posY, Board.SQUARE, Board.SQUARE);
-            
-            g.DrawRectangle(pen, unvisitedNode);
+
+            g.FillRectangle(Brushes.Black, unvisitedNode);
         }
 
         private void DrawEllipseRectange(Graphics g, int posX, int posY)

@@ -9,7 +9,7 @@ namespace Path_Finder
 {
     enum Cell
     { 
-        EMPTY, WALL, START, END
+        EMPTY, WALL, START, END, BOMB
     }
     class Board
     {
@@ -25,23 +25,33 @@ namespace Path_Finder
         public const int COLUMNSIZE = 75;
         public const int ROWSIZE = 35;
 
-        public Cell[,] grid = new Cell[ROWSIZE, COLUMNSIZE];
+        private const int STARTXSQUARE = 15;
+        private const int YSQUARE = 18;
+        private const int ENDXSQUARE = 60;
 
-        // Booleans for the Keys
-        public bool startKeyDown = true;
-        public bool endKeyDown = true;
+        private Cell[,] grid = new Cell[ROWSIZE, COLUMNSIZE];
 
-        public Position previousPosition = new Position(0, 0);
+        private bool bombSet;
+
+        private Position previousPosition = new Position(0, 0);
 
         // Start and End Position
-        public Position startPosition = new Position(15,18);
-        public Position endPosition = new Position(60, 18);
+        private Position startPosition = new Position(STARTXSQUARE, YSQUARE);
+        private Position endPosition = new Position(ENDXSQUARE, YSQUARE);
+
+        private Position bombPosition = new Position( (STARTXSQUARE + ENDXSQUARE)/2 , YSQUARE/2);
 
         public Board()
         {
-            grid[startPosition.y, startPosition.x] = START;
-            grid[endPosition.y, endPosition.x] = END;
+            grid[YSQUARE, STARTXSQUARE] = START;
+            grid[YSQUARE, ENDXSQUARE] = END;
         }
+
+        public Cell[,] GetGrid() => grid;
+
+        public Position GetStartingPosition() => startPosition;
+
+        public Position GetEndPosition() => endPosition;
 
         public bool InsideTheBoard(int posX, int posY)
         {
@@ -50,15 +60,6 @@ namespace Path_Finder
                 return true;
             }
             return false;
-        }
-
-        public bool IsValidCell(int posX, int posY)
-        {
-            if (IsStartPosition(posX, posY) || IsEndPosition(posX, posY))
-            {
-                return false;
-            }
-            return true;
         }
 
         public bool IsStartPosition(int posX, int posY)
@@ -97,62 +98,93 @@ namespace Path_Finder
             return false;
         }
 
-
         public void SetStartPosition(int posX, int posY)
         {
-            if(IsValidCell(posX, posY) && !IsWall(posX, posY))
+            if(previousPosition.x != posX || previousPosition.y != posY)
             {
-                grid[posY, posX] = START;
                 grid[startPosition.y, startPosition.x] = EMPTY;
+                grid[posY, posX] = START;
                 startPosition = new Position(posX, posY);
             }
         }
 
         public void SetEndPosition(int posX, int posY)
         {
-            if (IsValidCell(posX, posY) && !IsWall(posX, posY))
+            if (previousPosition.x != posX || previousPosition.y != posY)
             {
-                grid[posY, posX] = END;
                 grid[endPosition.y, endPosition.x] = EMPTY;
+                grid[posY, posX] = END;
                 endPosition = new Position(posX, posY);
             }
         }
 
         public void SetWall(int posX, int posY, bool justPress = true)
         {
-            if(IsValidCell(posX, posY))
+            if (justPress)
             {
-                if (justPress)
+                grid[posY, posX] = WALL;
+            }
+            else
+            {
+                if (previousPosition.x != posX || previousPosition.y != posY)
                 {
+                    previousPosition = new Position(posX, posY);
                     grid[posY, posX] = WALL;
-                }
-                else
-                {
-                    if (previousPosition.x != posX || previousPosition.y != posY)
-                    {
-                        previousPosition = new Position(posX, posY);
-                        grid[posY, posX] = WALL;
-                    }
                 }
             }
         }
 
         public void RemoveWall(int posX, int posY, bool justPress = true)
         {
-            if (grid[posY, posX] == WALL)
+            if(justPress)
             {
-                if(justPress)
+                grid[posY, posX] = EMPTY;
+            }else
+            {
+                if(previousPosition.x != posX || previousPosition.y != posY)
                 {
+                    previousPosition = new Position(posX, posY);
                     grid[posY, posX] = EMPTY;
-                }else
+                }
+            }
+        }
+
+        public void ClearBoard()
+        {
+            for(int i = 0; i < ROWSIZE; i++)
+            {
+                for(int j = 0; j < COLUMNSIZE; j++)
                 {
-                    if(previousPosition.x != posX || previousPosition.y != posY)
+                    if(grid[i, j] != EMPTY && (grid[i,j] != START || grid[i, j] != END))
                     {
-                        previousPosition = new Position(posX, posY);
-                        grid[posY, posX] = EMPTY;
+                        grid[i, j] = EMPTY;
                     }
                 }
-            } 
+            }
+
+            SetStartPosition(STARTXSQUARE, YSQUARE);
+           
+            SetEndPosition(ENDXSQUARE, YSQUARE);
         }
+
+        public bool IsBombSet()
+        {
+            if (bombSet)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void RemoveBomb()
+        {
+            grid[bombPosition.y, bombPosition.x] = EMPTY;
+        }
+
+        public void AddBomb()
+        {
+            grid[bombPosition.y, bombPosition.x] = BOMB;
+        }
+
     }
 }
