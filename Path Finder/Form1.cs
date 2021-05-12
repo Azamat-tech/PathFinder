@@ -26,7 +26,7 @@ namespace Path_Finder
         private readonly Font font = new Font("Times New Roman", 11);
         private readonly Board board = new Board();
 
-        private bool isMouseDown, isStartMoving, isEndMoving, isWallMoving;
+        private bool isMouseDown, isStartMoving, isEndMoving, isWallMoving, isBombMoving;
 
         private const string startingNodeName = "Starting Node: ";
         private const string targetNodeName = "Target Node: ";
@@ -37,10 +37,15 @@ namespace Path_Finder
 
         private const string clearBoardName = "Clear Board";
         private const string visualizeName = "Visulize";
-        private const string addBombName = "Bomb";
+        private const string addBombName = "Add Bomb";
+        private const string removeBombName = "Remove Bomb";
 
         private const string randomMazeName = "Random Maze";
         private const string recursiveMazeNamze = "Recursive Maze";
+
+        private Button clearButton;
+        private Button addRemoveButton;
+        private Button visualizeButton;
 
         public Form1()
         {
@@ -76,13 +81,13 @@ namespace Path_Finder
             
             Controls.Add(menu);
 
-            CreateButton(clearBoardName, 9 * BUTTONWIDTH + 3 * Board.SQUARE, Board.MARGIN + Board.SQUARE + 2,
+            clearButton = CreateButton(clearBoardName, 9 * BUTTONWIDTH + 3 * Board.SQUARE, Board.MARGIN + Board.SQUARE + 2,
                                                                                         BUTTONWIDTH, BUTTONHEIGHT);
 
-            CreateButton(addBombName, 10 * BUTTONWIDTH + 3 * Board.SQUARE, Board.MARGIN + Board.SQUARE + 2, 
+            addRemoveButton = CreateButton(addBombName, 10 * BUTTONWIDTH + 3 * Board.SQUARE, Board.MARGIN + Board.SQUARE + 2, 
                                                                               BUTTONWIDTH, BUTTONHEIGHT);
 
-            CreateButton(visualizeName, 11 * BUTTONWIDTH + 3 * Board.SQUARE, Board.MARGIN + Board.SQUARE + 2, 
+            visualizeButton = CreateButton(visualizeName, 11 * BUTTONWIDTH + 3 * Board.SQUARE, Board.MARGIN + Board.SQUARE + 2, 
                                                                               BUTTONWIDTH, BUTTONHEIGHT);
 
             CreateTextLabel(startingNodeName, 2 * Board.MARGIN, 2 * Board.SQUARE + Board.MARGIN, 
@@ -118,7 +123,7 @@ namespace Path_Finder
             label.Font = font;
             label.AutoSize = true;
         }
-        private void CreateButton(string name, int posX, int posY, int width, int height)
+        private Button CreateButton(string name, int posX, int posY, int width, int height)
         {
             Button button = new Button();
             this.Controls.Add(button);
@@ -137,11 +142,13 @@ namespace Path_Finder
             }
             else if (name == addBombName)
             {
-
-            }else if (name == visualizeName)
+                button.Click += new EventHandler(AddBomb);
+            }
+            else if (name == visualizeName)
             {
 
             }
+            return button;
         }
 
         private void ClearBoard(Object sender, EventArgs args)
@@ -152,13 +159,27 @@ namespace Path_Finder
 
         private void AddBomb(Object sender, EventArgs args)
         {
+            if(!board.IsTaken(board.GetBombPosition().x, board.GetBombPosition().y))
+            {
+                board.AddBomb();
+                addRemoveButton.Name = removeBombName;
+                addRemoveButton.Text = removeBombName;
+                addRemoveButton.Click -= AddBomb;
+                addRemoveButton.Click += RemoveBomb;
+                Invalidate();
+            }
+        }
+
+        private void RemoveBomb(Object sender, EventArgs args)
+        {
             if(board.IsBombSet())
             {
                 board.RemoveBomb();
-            }
-            else
-            {
-                board.AddBomb();
+                addRemoveButton.Name = addBombName;
+                addRemoveButton.Text = addBombName;
+                addRemoveButton.Click -= RemoveBomb;
+                addRemoveButton.Click += AddBomb;
+                Invalidate();
             }
         }
 
@@ -188,38 +209,39 @@ namespace Path_Finder
             
             if (isMouseDown && board.InsideTheBoard(e.X, e.Y))
             {
-                if (board.IsEmpty(position.x, position.y))
+                if (board.IsEmpty(position.x, position.y) && !isStartMoving && !isEndMoving && !isBombMoving)
                 {
                     board.SetWall(position.x, position.y, false);
                     isWallMoving = true;
                 }
-                else if (board.IsWall(position.x, position.y))
+                else if (board.IsWall(position.x, position.y) && !isStartMoving && !isEndMoving && !isBombMoving)
                 {
                     board.RemoveWall(position.x, position.y, false);
                 }
-                else if ((board.IsStartPosition(position.x, position.y) || isStartMoving) && !isWallMoving)
+                else if ((board.IsStartPosition(position.x, position.y) || isStartMoving) && !isWallMoving && !isBombMoving)
                 {
-                    if(isStartMoving)
-                    {
-                        board.SetStartPosition(position.x, position.y);
-                    }
+                    board.SetStartPosition(position.x, position.y);
                     isStartMoving = true;
                 }
-                else if ((board.IsEndPosition(position.x, position.y) || isEndMoving) && !isWallMoving)
+                else if ((board.IsEndPosition(position.x, position.y) || isEndMoving) && !isWallMoving && !isBombMoving)
                 {
-                    if (isEndMoving)
-                    {
-                        board.SetEndPosition(position.x, position.y);
-                    }
+                    board.SetEndPosition(position.x, position.y);
                     isEndMoving = true;
+                }
+                else if(board.IsBombSet())
+                {
+                    if((board.IsBombPosition(position.x, position.y) || isBombMoving) && !isWallMoving)
+                    {
+                        board.SetBombPosition(position.x, position.y);
+                        isBombMoving = true;
+                    }
                 }
                 Invalidate();
             }
         }
-
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            isMouseDown = isStartMoving = isEndMoving = isWallMoving = false;
+            isMouseDown = isStartMoving = isEndMoving = isWallMoving = isBombMoving = false;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -239,6 +261,12 @@ namespace Path_Finder
 
             DrawEndPosition(g, board.GetEndPosition().x * Board.SQUARE + Board.MARGIN,
                               board.GetEndPosition().y * Board.SQUARE + Board.MARGIN);
+
+            if(board.IsBombSet())
+            {
+                DrawEllipseRectange(g, board.GetBombPosition().x * Board.SQUARE + Board.MARGIN,
+                                       board.GetBombPosition().y * Board.SQUARE + Board.MARGIN);
+            }
 
             DrawWalls(g);
         }
@@ -310,7 +338,7 @@ namespace Path_Finder
 
         private void DrawEllipseRectange(Graphics g, int posX, int posY)
         {
-            Pen extraPen = new Pen(Brushes.Purple, 3);
+            Pen extraPen = new Pen(Brushes.Purple, 2);
             Pen extraInnerPen = new Pen(Brushes.Purple, 4);
 
             Rectangle circle = new Rectangle(posX - 1, posY - 1, Board.SQUARE - 1, Board.SQUARE - 1);
