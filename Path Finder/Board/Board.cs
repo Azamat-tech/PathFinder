@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Path_Finder.Cell;
+﻿using static Grid.Enums;
 
-namespace Path_Finder
+namespace Grid
 {
-    enum Cell
-    { 
-        EMPTY, WALL, START, END, BOMB
-    }
     class Board
     {
         public const int WIDTH = 1510;
@@ -32,7 +23,7 @@ namespace Path_Finder
         private const int BOMBXSQUARE = (STARTXSQUARE + ENDXSQUARE) / 2;
         private const int BOMBQSQUARE = YSQUARE / 2;
 
-        private Cell[,] grid = new Cell[ROWSIZE, COLUMNSIZE];
+        private readonly Cell[,] grid;
 
         private bool bombSet;
 
@@ -44,9 +35,17 @@ namespace Path_Finder
 
         public Board()
         {
-            grid[YSQUARE, STARTXSQUARE] = START;
-            grid[YSQUARE, ENDXSQUARE] = END;
-        }
+            grid = new Cell[ROWSIZE, COLUMNSIZE];
+            for (int i = 0; i < ROWSIZE; i++)
+            {
+                for(int j = 0; j < COLUMNSIZE; j++)
+                {
+                    SetCell(i, j, CellType.EMPTY);
+                }
+            }
+            SetStartPosition(STARTXSQUARE, YSQUARE);
+            SetEndPosition(ENDXSQUARE, YSQUARE);
+        } 
 
         public Cell[,] GetGrid() => grid;
 
@@ -69,7 +68,7 @@ namespace Path_Finder
         // Return true if the position is take by the start or end position
         public bool IsTaken(int posX, int posY)
         {
-            if (grid[posY, posX] == START || grid[posY, posX] == END)
+            if (grid[posY, posX].type == CellType.START || grid[posY, posX].type == CellType.END)
             {
                 return true;
             }
@@ -105,7 +104,7 @@ namespace Path_Finder
 
         public bool IsWall(int posX, int posY)
         {
-            if (grid[posY, posX] == WALL)
+            if (grid[posY, posX].type == CellType.WALL)
             {
                 return true;
             }
@@ -114,22 +113,31 @@ namespace Path_Finder
 
         public bool IsEmpty(int posX, int posY)
         {
-            if(grid[posY, posX] == EMPTY)
+            if(grid[posY, posX].type == CellType.EMPTY)
             {
                 return true;
             }
             return false;
         }
 
+        public void SetCell(int row, int column, CellType givenType)
+        {
+            grid[row, column] = new Cell
+            {
+                position = new Position(column, row),
+                type = givenType
+            };
+        }
+
         public void SetStartPosition(int posX, int posY)
         {
             if (IsEmpty(posX, posY))
             {
-                if(grid[startPosition.y, startPosition.x] == START)
+                if(grid[startPosition.y, startPosition.x].type == CellType.START)
                 {
-                    grid[startPosition.y, startPosition.x] = EMPTY;
+                    grid[startPosition.y, startPosition.x].type = CellType.EMPTY;
                 }
-                grid[posY, posX] = START;
+                grid[posY, posX].type = CellType.START;
                 startPosition = new Position(posX, posY);
             }
         }
@@ -138,11 +146,11 @@ namespace Path_Finder
         {
             if (IsEmpty(posX, posY))
             {
-                if(grid[endPosition.y, endPosition.x] == END)
+                if(grid[endPosition.y, endPosition.x].type == CellType.END)
                 {
-                    grid[endPosition.y, endPosition.x] = EMPTY;
+                    grid[endPosition.y, endPosition.x].type = CellType.EMPTY;
                 }
-                grid[posY, posX] = END;
+                grid[posY, posX].type = CellType.END;
                 endPosition = new Position(posX, posY);
             }
         }
@@ -151,8 +159,8 @@ namespace Path_Finder
         {
             if (IsEmpty(posX, posY))
             {
-                grid[bombPosition.y, bombPosition.x] = EMPTY;
-                grid[posY, posX] = BOMB;
+                grid[bombPosition.y, bombPosition.x].type = CellType.EMPTY;
+                grid[posY, posX].type = CellType.BOMB;
                 bombPosition = new Position(posX, posY);
             }
         }
@@ -161,14 +169,14 @@ namespace Path_Finder
         {
             if (justPress)
             {
-                grid[posY, posX] = WALL;
+                grid[posY, posX].type = CellType.WALL;
             }
             else
             {
                 if (previousPosition.x != posX || previousPosition.y != posY)
                 {
+                    grid[posY, posX].type = CellType.WALL;
                     previousPosition = new Position(posX, posY);
-                    grid[posY, posX] = WALL;
                 }
             }
         }
@@ -177,13 +185,13 @@ namespace Path_Finder
         {
             if(justPress)
             {
-                grid[posY, posX] = EMPTY;
+                grid[posY, posX].type = CellType.EMPTY;
             }else
             {
                 if(previousPosition.x != posX || previousPosition.y != posY)
                 {
+                    grid[posY, posX].type = CellType.EMPTY;
                     previousPosition = new Position(posX, posY);
-                    grid[posY, posX] = EMPTY;
                 }
             }
         }
@@ -195,9 +203,9 @@ namespace Path_Finder
             {
                 for(int j = 0; j < COLUMNSIZE; j++)
                 {
-                    if(grid[i, j] != EMPTY)
+                    if(grid[i, j].type != CellType.EMPTY)
                     {
-                        grid[i, j] = EMPTY;
+                        grid[i, j].type = CellType.EMPTY;
                     }
                 }
             }
@@ -206,6 +214,8 @@ namespace Path_Finder
             SetStartPosition(STARTXSQUARE, YSQUARE);
             // Set the End position back to an inital place
             SetEndPosition(ENDXSQUARE, YSQUARE);
+            // Remove the bomb from the Grid
+            RemoveBomb();
         }
 
         public bool IsBombSet()
@@ -219,7 +229,7 @@ namespace Path_Finder
 
         public void RemoveBomb()
         {
-            grid[bombPosition.y, bombPosition.x] = EMPTY;
+            grid[bombPosition.y, bombPosition.x].type = CellType.EMPTY;
             // Set the bomb to its original spot
             bombPosition = new Position((STARTXSQUARE + ENDXSQUARE) / 2, YSQUARE / 2);
             bombSet = false;
@@ -229,7 +239,7 @@ namespace Path_Finder
         {
             if(!IsTaken(bombPosition.x, bombPosition.y))
             {
-                grid[bombPosition.y, bombPosition.x] = BOMB;
+                grid[bombPosition.y, bombPosition.x].type = CellType.BOMB;
                 bombSet = true;
             }
         }

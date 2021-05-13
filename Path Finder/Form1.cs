@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Grid;
+using static Grid.Enums;
 
 namespace Path_Finder
 {
@@ -43,9 +39,9 @@ namespace Path_Finder
         private const string randomMazeName = "Random Maze";
         private const string recursiveMazeNamze = "Recursive Maze";
 
-        private Button clearButton;
-        private Button addRemoveButton;
-        private Button visualizeButton;
+        private readonly Button clearButton;
+        private readonly Button addRemoveButton;
+        private readonly Button visualizeButton;
 
         public Form1()
         {
@@ -153,6 +149,7 @@ namespace Path_Finder
 
         private void ClearBoard(Object sender, EventArgs args)
         {
+            RemoveBomb(sender, args);
             board.ClearBoard();
             Invalidate();
         }
@@ -283,7 +280,7 @@ namespace Path_Finder
             {
                 for(int j = 0; j < Board.COLUMNSIZE; j++)
                 {
-                    if(grid[i,j] == Cell.WALL)
+                    if(grid[i,j].type == CellType.WALL)
                     {
                         g.FillRectangle(Brushes.Black, j * Board.SQUARE + Board.MARGIN,
                                         i * Board.SQUARE + Board.MARGIN, 
