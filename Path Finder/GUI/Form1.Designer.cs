@@ -1,5 +1,5 @@
 ﻿
-namespace Path_Finder
+namespace Path_Finder.GUI
 {
     partial class Form1
     {
