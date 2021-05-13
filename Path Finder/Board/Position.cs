@@ -1,4 +1,4 @@
-﻿namespace Grid
+﻿namespace Path_Finder.Grid
 {
     class Position
     {

@@ -1,6 +1,6 @@
-﻿using static Grid.Enums;
+﻿using static Path_Finder.Grid.Enums;
 
-namespace Grid
+namespace Path_Finder.Grid
 {
     class Cell
     {

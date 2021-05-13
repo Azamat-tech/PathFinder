@@ -46,6 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorithms\AStar.cs" />
+    <Compile Include="Algorithms\BreadthFirst.cs" />
+    <Compile Include="Algorithms\DepthFirst.cs" />
+    <Compile Include="Algorithms\DepthFirstSmart.cs" />
+    <Compile Include="Algorithms\Dijkstra.cs" />
     <Compile Include="Board\Board.cs" />
     <Compile Include="Board\Cell.cs" />
     <Compile Include="Board\Enums.cs" />
@@ -83,8 +88,6 @@
   <ItemGroup>
     <None Include="GUI\App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Algorithms\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Grid;
-using static Grid.Enums;
+using Path_Finder.Grid;
+using static Path_Finder.Grid.Enums;
 
-namespace Path_Finder
+namespace Path_Finder.GUI
 {
     /// <summary>
     /// The Visual part of the program.
