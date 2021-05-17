@@ -1,50 +1,32 @@
 ﻿using static Path_Finder.Grid.Enums;
+using Path_Finder.Constants;
 
 namespace Path_Finder.Grid
 {
     class Board
     {
-        public const int WIDTH = 1510;
-        public const int HEIGHT = 710;
-
-        public const int MARGIN = 5;
-
-        public const int TOOLBOXWIDTH = 1500;
-        public const int TOOLBOXHEIGHT = 70;
-
-        public const int SQUARE = 20;
-        public const int COLUMNSIZE = 75;
-        public const int ROWSIZE = 35;
-
-        private const int STARTXSQUARE = 15;
-        private const int YSQUARE = 18;
-        private const int ENDXSQUARE = 60;
-
-        private const int BOMBXSQUARE = (STARTXSQUARE + ENDXSQUARE) / 2;
-        private const int BOMBQSQUARE = YSQUARE / 2;
-
         private readonly Cell[,] grid;
 
         private bool bombSet;
 
         private Position previousPosition = new Position(0, 0);
 
-        private Position startPosition = new Position(STARTXSQUARE, YSQUARE);
-        private Position endPosition = new Position(ENDXSQUARE, YSQUARE);
-        private Position bombPosition = new Position(BOMBXSQUARE, BOMBQSQUARE);
+        private Position startPosition = new Position(BoardConstant.STARTXSQUARE, BoardConstant.YSQUARE);
+        private Position endPosition = new Position(BoardConstant.ENDXSQUARE, BoardConstant.YSQUARE);
+        private Position bombPosition = new Position(BoardConstant.BOMBXSQUARE, BoardConstant.BOMBQSQUARE);
 
         public Board()
         {
-            grid = new Cell[ROWSIZE, COLUMNSIZE];
-            for (int i = 0; i < ROWSIZE; i++)
+            grid = new Cell[BoardConstant.ROWSIZE, BoardConstant.COLUMNSIZE];
+            for (int i = 0; i < BoardConstant.ROWSIZE; i++)
             {
-                for(int j = 0; j < COLUMNSIZE; j++)
+                for(int j = 0; j < BoardConstant.COLUMNSIZE; j++)
                 {
                     SetCell(i, j, CellType.EMPTY);
                 }
             }
-            SetStartPosition(STARTXSQUARE, YSQUARE);
-            SetEndPosition(ENDXSQUARE, YSQUARE);
+            SetStartPosition(BoardConstant.STARTXSQUARE, BoardConstant.YSQUARE);
+            SetEndPosition(BoardConstant.ENDXSQUARE, BoardConstant.YSQUARE);
         } 
 
         public Cell[,] GetGrid() => grid;
@@ -57,7 +39,8 @@ namespace Path_Finder.Grid
 
         public bool InsideTheBoard(int posX, int posY)
         {
-            if(posX >= MARGIN && posX <= WIDTH - MARGIN && posY >= 85 && posY <= HEIGHT - MARGIN)
+            if(posX >= BoardConstant.MARGIN && posX <= BoardConstant.WIDTH - BoardConstant.MARGIN && 
+                posY >= 85 && posY <= BoardConstant.HEIGHT - BoardConstant.MARGIN)
             {
                 return true;
             }
@@ -199,9 +182,9 @@ namespace Path_Finder.Grid
         public void ClearBoard()
         {
             // Clear the board back to EMPTY squares
-            for(int i = 0; i < ROWSIZE; i++)
+            for(int i = 0; i < BoardConstant.ROWSIZE; i++)
             {
-                for(int j = 0; j < COLUMNSIZE; j++)
+                for(int j = 0; j < BoardConstant.COLUMNSIZE; j++)
                 {
                     if(grid[i, j].type != CellType.EMPTY)
                     {
@@ -211,9 +194,9 @@ namespace Path_Finder.Grid
             }
 
             // Set the Start position back to an inital place
-            SetStartPosition(STARTXSQUARE, YSQUARE);
+            SetStartPosition(BoardConstant.STARTXSQUARE, BoardConstant.YSQUARE);
             // Set the End position back to an inital place
-            SetEndPosition(ENDXSQUARE, YSQUARE);
+            SetEndPosition(BoardConstant.ENDXSQUARE, BoardConstant.YSQUARE);
             // Remove the bomb from the Grid
             RemoveBomb();
         }
@@ -231,7 +214,8 @@ namespace Path_Finder.Grid
         {
             grid[bombPosition.y, bombPosition.x].type = CellType.EMPTY;
             // Set the bomb to its original spot
-            bombPosition = new Position((STARTXSQUARE + ENDXSQUARE) / 2, YSQUARE / 2);
+            bombPosition = new Position((BoardConstant.STARTXSQUARE + BoardConstant.ENDXSQUARE) / 2, 
+                                                                        BoardConstant.YSQUARE / 2);
             bombSet = false;
         }
 

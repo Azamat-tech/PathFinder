@@ -54,6 +54,8 @@
     <Compile Include="Board\Board.cs" />
     <Compile Include="Board\Cell.cs" />
     <Compile Include="Board\Enums.cs" />
+    <Compile Include="Constants\BoardConstants.cs" />
+    <Compile Include="Constants\ViewConstants.cs" />
     <Compile Include="GUI\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
