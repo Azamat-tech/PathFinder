@@ -57,32 +57,32 @@ namespace Path_Finder.GUI
             
             Controls.Add(menu);
 
-            clearButton = CreateButton(ViewConstants.clearBoardName, 9 * ViewConstants.BUTTONWIDTH + 3 * BoardConstant.SQUARE, BoardConstant.MARGIN + BoardConstant.SQUARE + 2,
+            clearButton = CreateButton(ViewConstants.clearBoardName, 9 * ViewConstants.BUTTONWIDTH + 3 * BoardConstants.SQUARE, BoardConstants.MARGIN + BoardConstants.SQUARE + 2,
                                                                                         ViewConstants.BUTTONWIDTH, ViewConstants.BUTTONHEIGHT);
 
-            addRemoveButton = CreateButton(ViewConstants.addBombName, 10 * ViewConstants.BUTTONWIDTH + 3 * BoardConstant.SQUARE, BoardConstant.MARGIN + BoardConstant.SQUARE + 2,
+            addRemoveButton = CreateButton(ViewConstants.addBombName, 10 * ViewConstants.BUTTONWIDTH + 3 * BoardConstants.SQUARE, BoardConstants.MARGIN + BoardConstants.SQUARE + 2,
                                                                               ViewConstants.BUTTONWIDTH, ViewConstants.BUTTONHEIGHT);
 
-            visualizeButton = CreateButton(ViewConstants.visualizeName, 11 * ViewConstants.BUTTONWIDTH + 3 * BoardConstant.SQUARE, BoardConstant.MARGIN + BoardConstant.SQUARE + 2,
+            visualizeButton = CreateButton(ViewConstants.visualizeName, 11 * ViewConstants.BUTTONWIDTH + 3 * BoardConstants.SQUARE, BoardConstants.MARGIN + BoardConstants.SQUARE + 2,
                                                                               ViewConstants.BUTTONWIDTH, ViewConstants.BUTTONHEIGHT);
 
-            CreateTextLabel(ViewConstants.startingNodeName, 2 * BoardConstant.MARGIN, 2 * BoardConstant.SQUARE + BoardConstant.MARGIN,
+            CreateTextLabel(ViewConstants.startingNodeName, 2 * BoardConstants.MARGIN, 2 * BoardConstants.SQUARE + BoardConstants.MARGIN,
                                             ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT);
 
-            CreateTextLabel(ViewConstants.targetNodeName, 3 * BoardConstant.MARGIN + BoardConstant.SQUARE + ViewConstants.LABELWIDTH, 
-                                            2 * BoardConstant.SQUARE + BoardConstant.MARGIN, ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT);
+            CreateTextLabel(ViewConstants.targetNodeName, 3 * BoardConstants.MARGIN + BoardConstants.SQUARE + ViewConstants.LABELWIDTH, 
+                                            2 * BoardConstants.SQUARE + BoardConstants.MARGIN, ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT);
             
-            CreateTextLabel(ViewConstants.bombNodeName, 3 * BoardConstant.MARGIN + 2 * BoardConstant.SQUARE + 2 * ViewConstants.LABELWIDTH, 
-                                            2 * BoardConstant.SQUARE + BoardConstant.MARGIN, ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT);
+            CreateTextLabel(ViewConstants.bombNodeName, 3 * BoardConstants.MARGIN + 2 * BoardConstants.SQUARE + 2 * ViewConstants.LABELWIDTH, 
+                                            2 * BoardConstants.SQUARE + BoardConstants.MARGIN, ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT);
             
-            CreateTextLabel(ViewConstants.wallNodeName, 3 * BoardConstant.MARGIN + 3 * BoardConstant.SQUARE + 3 * ViewConstants.LABELWIDTH,
-                                            2 * BoardConstant.SQUARE + BoardConstant.MARGIN, ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT);
+            CreateTextLabel(ViewConstants.wallNodeName, 3 * BoardConstants.MARGIN + 3 * BoardConstants.SQUARE + 3 * ViewConstants.LABELWIDTH,
+                                            2 * BoardConstants.SQUARE + BoardConstants.MARGIN, ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT);
             
-            CreateTextLabel(ViewConstants.visitedNodeName, BoardConstant.MARGIN + 4 * BoardConstant.SQUARE + 4 * ViewConstants.LABELWIDTH,
-                                            2 * BoardConstant.SQUARE + BoardConstant.MARGIN, ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT);
+            CreateTextLabel(ViewConstants.visitedNodeName, BoardConstants.MARGIN + 4 * BoardConstants.SQUARE + 4 * ViewConstants.LABELWIDTH,
+                                            2 * BoardConstants.SQUARE + BoardConstants.MARGIN, ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT);
             
-            CreateTextLabel(ViewConstants.shortestPathNodeName, 8 * BoardConstant.MARGIN + 5 * BoardConstant.SQUARE + 5 * ViewConstants.LABELWIDTH,
-                                            2 * BoardConstant.SQUARE + BoardConstant.MARGIN, ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT);
+            CreateTextLabel(ViewConstants.shortestPathNodeName, 8 * BoardConstants.MARGIN + 5 * BoardConstants.SQUARE + 5 * ViewConstants.LABELWIDTH,
+                                            2 * BoardConstants.SQUARE + BoardConstants.MARGIN, ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT);
 
 
         }
@@ -162,7 +162,7 @@ namespace Path_Finder.GUI
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            Position position = new Position((e.X - BoardConstant.MARGIN) / BoardConstant.SQUARE, (e.Y - BoardConstant.MARGIN) / BoardConstant.SQUARE);
+            Position position = new Position((e.X - BoardConstants.MARGIN) / BoardConstants.SQUARE, (e.Y - BoardConstants.MARGIN) / BoardConstants.SQUARE);
             
             if (board.InsideTheBoard(e.X, e.Y))
             {
@@ -182,7 +182,7 @@ namespace Path_Finder.GUI
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            Position position = new Position((e.X - BoardConstant.MARGIN) / BoardConstant.SQUARE, (e.Y - BoardConstant.MARGIN) / BoardConstant.SQUARE);
+            Position position = new Position((e.X - BoardConstants.MARGIN) / BoardConstants.SQUARE, (e.Y - BoardConstants.MARGIN) / BoardConstants.SQUARE);
             
             if (isMouseDown && board.InsideTheBoard(e.X, e.Y))
             {
@@ -228,21 +228,21 @@ namespace Path_Finder.GUI
 
             DrawGrid(g);
 
-            DrawToolBoxBorders(g, new Position(7 * ViewConstants.BUTTONWIDTH - 2 * BoardConstant.SQUARE, BoardConstant.MARGIN + BoardConstant.SQUARE), 
-                    new Position(7 * ViewConstants.BUTTONWIDTH - 2 * BoardConstant.SQUARE, BoardConstant.MARGIN + BoardConstant.SQUARE + BoardConstant.TOOLBOXHEIGHT - BoardConstant.SQUARE + BoardConstant.MARGIN));
+            DrawToolBoxBorders(g, new Position(7 * ViewConstants.BUTTONWIDTH - 2 * BoardConstants.SQUARE, BoardConstants.MARGIN + BoardConstants.SQUARE), 
+                    new Position(7 * ViewConstants.BUTTONWIDTH - 2 * BoardConstants.SQUARE, BoardConstants.MARGIN + BoardConstants.SQUARE + BoardConstants.TOOLBOXHEIGHT - BoardConstants.SQUARE + BoardConstants.MARGIN));
 
             DrawToolBoxItems(g);
 
-            DrawStartPosition(g, board.GetStartingPosition().x * BoardConstant.SQUARE + BoardConstant.MARGIN,
-                                       board.GetStartingPosition().y * BoardConstant.SQUARE + BoardConstant.MARGIN);
+            DrawStartPosition(g, board.GetStartingPosition().x * BoardConstants.SQUARE + BoardConstants.MARGIN,
+                                       board.GetStartingPosition().y * BoardConstants.SQUARE + BoardConstants.MARGIN);
 
-            DrawEndPosition(g, board.GetEndPosition().x * BoardConstant.SQUARE + BoardConstant.MARGIN,
-                              board.GetEndPosition().y * BoardConstant.SQUARE + BoardConstant.MARGIN);
+            DrawEndPosition(g, board.GetEndPosition().x * BoardConstants.SQUARE + BoardConstants.MARGIN,
+                              board.GetEndPosition().y * BoardConstants.SQUARE + BoardConstants.MARGIN);
 
             if(board.IsBombSet())
             {
-                DrawEllipseRectange(g, board.GetBombPosition().x * BoardConstant.SQUARE + BoardConstant.MARGIN,
-                                       board.GetBombPosition().y * BoardConstant.SQUARE + BoardConstant.MARGIN);
+                DrawEllipseRectange(g, board.GetBombPosition().x * BoardConstants.SQUARE + BoardConstants.MARGIN,
+                                       board.GetBombPosition().y * BoardConstants.SQUARE + BoardConstants.MARGIN);
             }
 
             DrawWalls(g);
@@ -256,15 +256,15 @@ namespace Path_Finder.GUI
         private void DrawWalls(Graphics g)
         {
             Cell[,] grid = board.GetGrid();
-            for(int i = 0; i < BoardConstant.ROWSIZE; i++)
+            for(int i = 0; i < BoardConstants.ROWSIZE; i++)
             {
-                for(int j = 0; j < BoardConstant.COLUMNSIZE; j++)
+                for(int j = 0; j < BoardConstants.COLUMNSIZE; j++)
                 {
                     if(grid[i,j].type == CellType.WALL)
                     {
-                        g.FillRectangle(Brushes.Black, j * BoardConstant.SQUARE + BoardConstant.MARGIN,
-                                        i * BoardConstant.SQUARE + BoardConstant.MARGIN, 
-                                        BoardConstant.SQUARE, BoardConstant.SQUARE);
+                        g.FillRectangle(Brushes.Black, j * BoardConstants.SQUARE + BoardConstants.MARGIN,
+                                        i * BoardConstants.SQUARE + BoardConstants.MARGIN, 
+                                        BoardConstants.SQUARE, BoardConstants.SQUARE);
                     }
                 }
             }
@@ -275,27 +275,27 @@ namespace Path_Finder.GUI
             format.LineAlignment = StringAlignment.Center;
             format.Alignment = StringAlignment.Center;
 
-            DrawStartPosition(g, BoardConstant.MARGIN + 1 + ViewConstants.LABELWIDTH, 2 * BoardConstant.SQUARE + 4);
-            DrawEndPosition(g, BoardConstant.MARGIN + 2 * ViewConstants.LABELWIDTH + BoardConstant.SQUARE, 2 * BoardConstant.SQUARE + 4);
+            DrawStartPosition(g, BoardConstants.MARGIN + 1 + ViewConstants.LABELWIDTH, 2 * BoardConstants.SQUARE + 4);
+            DrawEndPosition(g, BoardConstants.MARGIN + 2 * ViewConstants.LABELWIDTH + BoardConstants.SQUARE, 2 * BoardConstants.SQUARE + 4);
 
-            DrawEllipseRectange(g, BoardConstant.MARGIN + 3 * ViewConstants.LABELWIDTH + 2 * BoardConstant.SQUARE, 2 * BoardConstant.SQUARE + 4);
-            DrawWallNode(g, 3 * BoardConstant.MARGIN + 4 * ViewConstants.LABELWIDTH + 2 * BoardConstant.SQUARE, 2 * BoardConstant.SQUARE + 4);
+            DrawEllipseRectange(g, BoardConstants.MARGIN + 3 * ViewConstants.LABELWIDTH + 2 * BoardConstants.SQUARE, 2 * BoardConstants.SQUARE + 4);
+            DrawWallNode(g, 3 * BoardConstants.MARGIN + 4 * ViewConstants.LABELWIDTH + 2 * BoardConstants.SQUARE, 2 * BoardConstants.SQUARE + 4);
 
-            DrawVisitedNodes(g, 5 * ViewConstants.LABELWIDTH + 4 * BoardConstant.SQUARE, 2 * BoardConstant.SQUARE + 4);
-            DrawVisitedNodes(g, BoardConstant.MARGIN + 5 * ViewConstants.LABELWIDTH + 5 * BoardConstant.SQUARE, 2 * BoardConstant.SQUARE + 4, isFirstDestination:false);
+            DrawVisitedNodes(g, 5 * ViewConstants.LABELWIDTH + 4 * BoardConstants.SQUARE, 2 * BoardConstants.SQUARE + 4);
+            DrawVisitedNodes(g, BoardConstants.MARGIN + 5 * ViewConstants.LABELWIDTH + 5 * BoardConstants.SQUARE, 2 * BoardConstants.SQUARE + 4, isFirstDestination:false);
 
-            DrawShortestPathNode(g, 2 * BoardConstant.MARGIN + 6 * ViewConstants.LABELWIDTH + 8 * BoardConstant.SQUARE, 2 * BoardConstant.SQUARE + 4);
+            DrawShortestPathNode(g, 2 * BoardConstants.MARGIN + 6 * ViewConstants.LABELWIDTH + 8 * BoardConstants.SQUARE, 2 * BoardConstants.SQUARE + 4);
         }
 
         private void DrawShortestPathNode(Graphics g, int posX, int posY)
         {
-            Rectangle path = new Rectangle(posX, posY, BoardConstant.SQUARE, BoardConstant.SQUARE);
+            Rectangle path = new Rectangle(posX, posY, BoardConstants.SQUARE, BoardConstants.SQUARE);
             g.FillRectangle(Brushes.Yellow, path);
         }
 
         private void DrawVisitedNodes(Graphics g, int posX, int PosY, bool isFirstDestination = true)
         {
-            Rectangle visited = new Rectangle(posX, PosY, BoardConstant.SQUARE, BoardConstant.SQUARE);
+            Rectangle visited = new Rectangle(posX, PosY, BoardConstants.SQUARE, BoardConstants.SQUARE);
             if (isFirstDestination)
             {
                 g.FillRectangle(Brushes.Aqua, visited);
@@ -308,7 +308,7 @@ namespace Path_Finder.GUI
 
         private void DrawWallNode(Graphics g, int posX, int posY)
         {
-            Rectangle unvisitedNode = new Rectangle(posX, posY, BoardConstant.SQUARE, BoardConstant.SQUARE);
+            Rectangle unvisitedNode = new Rectangle(posX, posY, BoardConstants.SQUARE, BoardConstants.SQUARE);
 
             g.FillRectangle(Brushes.Black, unvisitedNode);
         }
@@ -318,8 +318,8 @@ namespace Path_Finder.GUI
             Pen extraPen = new Pen(Brushes.Purple, 2);
             Pen extraInnerPen = new Pen(Brushes.Purple, 4);
 
-            Rectangle circle = new Rectangle(posX - 1, posY - 1, BoardConstant.SQUARE - 1, BoardConstant.SQUARE - 1);
-            Rectangle innerCircle = new Rectangle(posX + BoardConstant.MARGIN + 1, posY + BoardConstant.MARGIN + 1, BoardConstant.MARGIN, BoardConstant.MARGIN);
+            Rectangle circle = new Rectangle(posX - 1, posY - 1, BoardConstants.SQUARE - 1, BoardConstants.SQUARE - 1);
+            Rectangle innerCircle = new Rectangle(posX + BoardConstants.MARGIN + 1, posY + BoardConstants.MARGIN + 1, BoardConstants.MARGIN, BoardConstants.MARGIN);
             
             g.DrawEllipse(extraPen, circle);
             g.DrawEllipse(extraInnerPen, innerCircle);
@@ -330,7 +330,7 @@ namespace Path_Finder.GUI
             format.LineAlignment = StringAlignment.Center;
             format.Alignment = StringAlignment.Center;
 
-            Rectangle startRectangle = new Rectangle(posX, posY, BoardConstant.SQUARE, BoardConstant.SQUARE);
+            Rectangle startRectangle = new Rectangle(posX, posY, BoardConstants.SQUARE, BoardConstants.SQUARE);
 
             g.FillRectangle(Brushes.Aqua, startRectangle);
             g.DrawString("S", font, Brushes.Black, startRectangle, format);
@@ -341,7 +341,7 @@ namespace Path_Finder.GUI
             format.LineAlignment = StringAlignment.Center;
             format.Alignment = StringAlignment.Center;
 
-            Rectangle endRectangle = new Rectangle(posX, posY, BoardConstant.SQUARE, BoardConstant.SQUARE);
+            Rectangle endRectangle = new Rectangle(posX, posY, BoardConstants.SQUARE, BoardConstants.SQUARE);
 
             g.FillRectangle(Brushes.Lime, endRectangle);
             g.DrawString("E", font, Brushes.Black, endRectangle, format);
@@ -351,21 +351,21 @@ namespace Path_Finder.GUI
         {
             Rectangle boardOutLine = new Rectangle(
                                 0, 0,
-                                BoardConstant.WIDTH,
-                                BoardConstant.HEIGHT
+                                BoardConstants.WIDTH,
+                                BoardConstants.HEIGHT
                                 );
 
             Rectangle toolBoxOutLine = new Rectangle(
-                                BoardConstant.MARGIN, BoardConstant.MARGIN + BoardConstant.SQUARE, 
-                                BoardConstant.TOOLBOXWIDTH,
-                                BoardConstant.TOOLBOXHEIGHT - BoardConstant.SQUARE + BoardConstant.MARGIN
+                                BoardConstants.MARGIN, BoardConstants.MARGIN + BoardConstants.SQUARE, 
+                                BoardConstants.TOOLBOXWIDTH,
+                                BoardConstants.TOOLBOXHEIGHT - BoardConstants.SQUARE + BoardConstants.MARGIN
                                 );
 
             Rectangle gridOutLine = new Rectangle(
-                                BoardConstant.MARGIN,
-                                BoardConstant.TOOLBOXHEIGHT + 3 * BoardConstant.MARGIN,
-                                BoardConstant.TOOLBOXWIDTH,
-                                BoardConstant.HEIGHT - (BoardConstant.TOOLBOXHEIGHT + 4 * BoardConstant.MARGIN)
+                                BoardConstants.MARGIN,
+                                BoardConstants.TOOLBOXHEIGHT + 3 * BoardConstants.MARGIN,
+                                BoardConstants.TOOLBOXWIDTH,
+                                BoardConstants.HEIGHT - (BoardConstants.TOOLBOXHEIGHT + 4 * BoardConstants.MARGIN)
                                 );
 
             g.DrawRectangle(pen, boardOutLine);
@@ -376,13 +376,13 @@ namespace Path_Finder.GUI
 
         private void DrawGrid(Graphics g)
         {
-            for (int x = 5; x <= BoardConstant.SQUARE * BoardConstant.COLUMNSIZE; x += BoardConstant.SQUARE)
+            for (int x = 5; x <= BoardConstants.SQUARE * BoardConstants.COLUMNSIZE; x += BoardConstants.SQUARE)
             {
-                g.DrawLine(pen, x, (BoardConstant.TOOLBOXHEIGHT + 3 * BoardConstant.MARGIN), x, BoardConstant.SQUARE * BoardConstant.ROWSIZE + BoardConstant.MARGIN);
+                g.DrawLine(pen, x, (BoardConstants.TOOLBOXHEIGHT + 3 * BoardConstants.MARGIN), x, BoardConstants.SQUARE * BoardConstants.ROWSIZE + BoardConstants.MARGIN);
             }
-            for (int y = (BoardConstant.TOOLBOXHEIGHT + 3 * BoardConstant.MARGIN); y <= BoardConstant.SQUARE * BoardConstant.ROWSIZE; y += BoardConstant.SQUARE)
+            for (int y = (BoardConstants.TOOLBOXHEIGHT + 3 * BoardConstants.MARGIN); y <= BoardConstants.SQUARE * BoardConstants.ROWSIZE; y += BoardConstants.SQUARE)
             {
-                g.DrawLine(pen, 5, y, BoardConstant.SQUARE * BoardConstant.COLUMNSIZE + BoardConstant.MARGIN, y);
+                g.DrawLine(pen, 5, y, BoardConstants.SQUARE * BoardConstants.COLUMNSIZE + BoardConstants.MARGIN, y);
             }
         }
     }

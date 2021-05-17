@@ -11,22 +11,22 @@ namespace Path_Finder.Grid
 
         private Position previousPosition = new Position(0, 0);
 
-        private Position startPosition = new Position(BoardConstant.STARTXSQUARE, BoardConstant.YSQUARE);
-        private Position endPosition = new Position(BoardConstant.ENDXSQUARE, BoardConstant.YSQUARE);
-        private Position bombPosition = new Position(BoardConstant.BOMBXSQUARE, BoardConstant.BOMBQSQUARE);
+        private Position startPosition = new Position(BoardConstants.STARTXSQUARE, BoardConstants.YSQUARE);
+        private Position endPosition = new Position(BoardConstants.ENDXSQUARE, BoardConstants.YSQUARE);
+        private Position bombPosition = new Position(BoardConstants.BOMBXSQUARE, BoardConstants.BOMBQSQUARE);
 
         public Board()
         {
-            grid = new Cell[BoardConstant.ROWSIZE, BoardConstant.COLUMNSIZE];
-            for (int i = 0; i < BoardConstant.ROWSIZE; i++)
+            grid = new Cell[BoardConstants.ROWSIZE, BoardConstants.COLUMNSIZE];
+            for (int i = 0; i < BoardConstants.ROWSIZE; i++)
             {
-                for(int j = 0; j < BoardConstant.COLUMNSIZE; j++)
+                for(int j = 0; j < BoardConstants.COLUMNSIZE; j++)
                 {
                     SetCell(i, j, CellType.EMPTY);
                 }
             }
-            SetStartPosition(BoardConstant.STARTXSQUARE, BoardConstant.YSQUARE);
-            SetEndPosition(BoardConstant.ENDXSQUARE, BoardConstant.YSQUARE);
+            SetStartPosition(BoardConstants.STARTXSQUARE, BoardConstants.YSQUARE);
+            SetEndPosition(BoardConstants.ENDXSQUARE, BoardConstants.YSQUARE);
         } 
 
         public Cell[,] GetGrid() => grid;
@@ -39,8 +39,8 @@ namespace Path_Finder.Grid
 
         public bool InsideTheBoard(int posX, int posY)
         {
-            if(posX >= BoardConstant.MARGIN && posX <= BoardConstant.WIDTH - BoardConstant.MARGIN && 
-                posY >= 85 && posY <= BoardConstant.HEIGHT - BoardConstant.MARGIN)
+            if(posX >= BoardConstants.MARGIN && posX <= BoardConstants.WIDTH - BoardConstants.MARGIN && 
+                posY >= 85 && posY <= BoardConstants.HEIGHT - BoardConstants.MARGIN)
             {
                 return true;
             }
@@ -182,9 +182,9 @@ namespace Path_Finder.Grid
         public void ClearBoard()
         {
             // Clear the board back to EMPTY squares
-            for(int i = 0; i < BoardConstant.ROWSIZE; i++)
+            for(int i = 0; i < BoardConstants.ROWSIZE; i++)
             {
-                for(int j = 0; j < BoardConstant.COLUMNSIZE; j++)
+                for(int j = 0; j < BoardConstants.COLUMNSIZE; j++)
                 {
                     if(grid[i, j].type != CellType.EMPTY)
                     {
@@ -194,9 +194,9 @@ namespace Path_Finder.Grid
             }
 
             // Set the Start position back to an inital place
-            SetStartPosition(BoardConstant.STARTXSQUARE, BoardConstant.YSQUARE);
+            SetStartPosition(BoardConstants.STARTXSQUARE, BoardConstants.YSQUARE);
             // Set the End position back to an inital place
-            SetEndPosition(BoardConstant.ENDXSQUARE, BoardConstant.YSQUARE);
+            SetEndPosition(BoardConstants.ENDXSQUARE, BoardConstants.YSQUARE);
             // Remove the bomb from the Grid
             RemoveBomb();
         }
@@ -214,8 +214,8 @@ namespace Path_Finder.Grid
         {
             grid[bombPosition.y, bombPosition.x].type = CellType.EMPTY;
             // Set the bomb to its original spot
-            bombPosition = new Position((BoardConstant.STARTXSQUARE + BoardConstant.ENDXSQUARE) / 2, 
-                                                                        BoardConstant.YSQUARE / 2);
+            bombPosition = new Position((BoardConstants.STARTXSQUARE + BoardConstants.ENDXSQUARE) / 2, 
+                                                                        BoardConstants.YSQUARE / 2);
             bombSet = false;
         }
 

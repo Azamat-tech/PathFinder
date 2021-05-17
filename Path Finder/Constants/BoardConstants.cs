@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Path_Finder.Constants
+﻿namespace Path_Finder.Constants
 {
-    public static class BoardConstant
+    public static class BoardConstants
     {
         public const int WIDTH = 1510;
         public const int HEIGHT = 710;
