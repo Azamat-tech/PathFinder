@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Path_Finder.Grid;
-using static Path_Finder.Grid.Enums;
 using Path_Finder.Constants;
 
 namespace Path_Finder.GUI

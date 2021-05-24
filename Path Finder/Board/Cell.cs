@@ -1,7 +1,10 @@
-﻿using static Path_Finder.Grid.Enums;
-
-namespace Path_Finder.Grid
+﻿namespace Path_Finder.Grid
 {
+    public enum CellType
+    {
+        EMPTY, WALL, START, END, BOMB
+    }
+
     class Cell
     {
         public Position position { get; set; }

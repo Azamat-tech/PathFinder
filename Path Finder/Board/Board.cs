@@ -1,5 +1,4 @@
-﻿using static Path_Finder.Grid.Enums;
-using Path_Finder.Constants;
+﻿using Path_Finder.Constants;
 
 namespace Path_Finder.Grid
 {
