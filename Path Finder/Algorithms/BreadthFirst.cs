@@ -7,9 +7,15 @@ using Path_Finder.Constants;
 
 namespace Path_Finder.Algorithms
 {
+    /// <summary>
+    /// The implementation of a Breadth-First Search algorithm that inherits 
+    /// from the UninformedSearch using the LIFO method in picking the nodes
+    /// from the frontier
+    /// </summary>
     class BreadthFirst : UninformedSearch
     {
         private Queue<Position> queue = new Queue<Position>();
+
         public sealed override void NeighbourTraversal(Position current, ref Cell[,] grid)
         {
             for (int i = 0; i < 4; i++)
@@ -40,6 +46,7 @@ namespace Path_Finder.Algorithms
             }
         }
 
+
         public sealed override void GetPath(Position start, Position end, Cell[,] grid)
         {
             Position previousPosition; 
@@ -56,6 +63,7 @@ namespace Path_Finder.Algorithms
                 }
             }
         }
+
 
         public sealed override List<Position> Search(Position start, Position end, Cell[,] grid)
         {
