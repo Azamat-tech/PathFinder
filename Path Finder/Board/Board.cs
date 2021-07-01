@@ -7,12 +7,24 @@ namespace Path_Finder.Grid
         private readonly Cell[,] grid;
 
         private bool bombSet;
+        public bool startP { get; private set; }
+        public bool endP { get; private set; }
+        public bool bombP { get; private set; }
 
         private Position previousPosition = new Position(0, 0);
 
-        private Position startPosition = new Position(BoardConstants.STARTXSQUARE, BoardConstants.YSQUARE);
-        private Position endPosition = new Position(BoardConstants.ENDXSQUARE, BoardConstants.YSQUARE);
-        private Position bombPosition = new Position(BoardConstants.BOMBXSQUARE, BoardConstants.BOMBQSQUARE);
+        private Position startPosition = new Position
+            (
+                BoardConstants.STARTXSQUARE, BoardConstants.YSQUARE
+            );
+        private Position endPosition = new Position
+            (
+                BoardConstants.ENDXSQUARE, BoardConstants.YSQUARE
+            );
+        private Position bombPosition = new Position
+            (
+                BoardConstants.BOMBXSQUARE, BoardConstants.BOMBQSQUARE
+            );
 
         public Board()
         {
@@ -47,7 +59,7 @@ namespace Path_Finder.Grid
         }
 
 
-        // Return true if the position is take by the start or end position
+        // Return true if the position is taken by the start or end position
         public bool IsTaken(int posX, int posY)
         {
             if (grid[posY, posX].type == CellType.START || grid[posY, posX].type == CellType.END)

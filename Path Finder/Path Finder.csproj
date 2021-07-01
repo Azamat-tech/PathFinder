@@ -51,6 +51,10 @@
     <Compile Include="Algorithms\DepthFirst.cs" />
     <Compile Include="Algorithms\DepthFirstSmart.cs" />
     <Compile Include="Algorithms\Dijkstra.cs" />
+    <Compile Include="Algorithms\GraphSearch.cs" />
+    <Compile Include="Algorithms\InformedSearch.cs" />
+    <Compile Include="Algorithms\UniformSearch.cs" />
+    <Compile Include="Algorithms\UninformedSearch.cs" />
     <Compile Include="Board\Board.cs" />
     <Compile Include="Board\Cell.cs" />
     <Compile Include="Constants\BoardConstants.cs" />

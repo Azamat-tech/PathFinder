@@ -8,6 +8,9 @@
     class Cell
     {
         public Position position { get; set; }
+        public Position parent { get; set; }
         public CellType type { get; set; }
+        public bool visited { get; set; }
+
     }
 }
