@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Path_Finder.Grid;
-using Path_Finder.Constants;
 
 namespace Path_Finder.Algorithms
 {
     abstract class GraphSearch
     {
-        public List<Position> path;
-        public List<Position> allVisistedPositions;
+        public List<Position> path = new List<Position>();
+        public List<Position> allVisistedPositions = new List<Position>();
 
         protected bool reached;
         protected int[] directionR = { -1, 1, 0, 0 };

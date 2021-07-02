@@ -26,13 +26,15 @@ namespace Path_Finder.GUI
         {
             InitializeComponent();
 
+            #region Adding menu
+
             ToolStripMenuItem[] algorithms =
             {
                 new ToolStripMenuItem("Breadth-First Search", null),
                 new ToolStripMenuItem("Depth-First Search", null),
-                new ToolStripMenuItem("Depth-First Search Smart", null),
+                // new ToolStripMenuItem("Depth-First Search Smart", null),
                 new ToolStripMenuItem("A* Search", null),
-                new ToolStripMenuItem("Dijhstra's Algorithm", null),
+                new ToolStripMenuItem("Dijkstra's Algorithm", null),
             };
 
             ToolStripMenuItem[] mazeGenerators =
@@ -56,6 +58,9 @@ namespace Path_Finder.GUI
             
             Controls.Add(menu);
 
+            #endregion
+
+            #region Adding Buttons
             clearButton = CreateButton
                 (
                     ViewConstants.clearBoardName, 9 * ViewConstants.BUTTONWIDTH + 3 * BoardConstants.SQUARE, 
@@ -76,6 +81,40 @@ namespace Path_Finder.GUI
                     BoardConstants.MARGIN + BoardConstants.SQUARE + 2,
                     ViewConstants.BUTTONWIDTH, ViewConstants.BUTTONHEIGHT
                 );
+            #endregion
+
+/*            void BFS(object sender, EventArgs args)
+            {
+                if (board.SetAlgorithm("BFS"))
+                {
+
+                }
+            }
+
+            void DFS(object sender, EventArgs args)
+            {
+                if (board.SetAlgorithm("DFS"))
+                {
+
+                }
+            }
+
+            void AStar(object sender, EventArgs args)
+            {
+                if (board.SetAlgorithm("AStar"))
+                {
+
+                }
+            } 
+
+            void Dijkstra(object sender, EventArgs args)
+            {
+                if (board.SetAlgorithm("Dijkstra"))
+                {
+
+                }
+            }*/
+            #region Adding Labels
 
             CreateTextLabel
                 (
@@ -123,9 +162,13 @@ namespace Path_Finder.GUI
                     2 * BoardConstants.SQUARE + BoardConstants.MARGIN, 
                     ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT
                 );
-
+            #endregion
 
         }
+
+        #region Algorithm Events
+
+        #endregion
 
         private void CreateTextLabel(string name, int posX, int posY, int width, int height)
         {
@@ -139,6 +182,7 @@ namespace Path_Finder.GUI
             label.Font = font;
             label.AutoSize = true;
         }
+
         private Button CreateButton(string name, int posX, int posY, int width, int height)
         {
             Button button = new Button();
@@ -162,10 +206,12 @@ namespace Path_Finder.GUI
             }
             else if (name == ViewConstants.visualizeName)
             {
-
+                
             }
             return button;
         }
+
+
 
         private void ClearBoard(Object sender, EventArgs args)
         {

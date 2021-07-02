@@ -46,17 +46,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Algorithms\AStar.cs" />
-    <Compile Include="Algorithms\BreadthFirst.cs" />
-    <Compile Include="Algorithms\DepthFirst.cs" />
-    <Compile Include="Algorithms\DepthFirstSmart.cs" />
-    <Compile Include="Algorithms\Dijkstra.cs" />
-    <Compile Include="Algorithms\GraphSearch.cs" />
-    <Compile Include="Algorithms\InformedSearch.cs" />
-    <Compile Include="Algorithms\UniformSearch.cs" />
-    <Compile Include="Algorithms\UninformedSearch.cs" />
-    <Compile Include="Board\Board.cs" />
-    <Compile Include="Board\Cell.cs" />
+    <Compile Include="Model\Algorithms\AStar.cs" />
+    <Compile Include="Model\Algorithms\BreadthFirst.cs" />
+    <Compile Include="Model\Algorithms\DepthFirst.cs" />
+    <Compile Include="Model\Algorithms\DepthFirstSmart.cs" />
+    <Compile Include="Model\Algorithms\Dijkstra.cs" />
+    <Compile Include="Model\Algorithms\GraphSearch.cs" />
+    <Compile Include="Model\Algorithms\InformedSearch.cs" />
+    <Compile Include="Model\Algorithms\UniformSearch.cs" />
+    <Compile Include="Model\Algorithms\UninformedSearch.cs" />
+    <Compile Include="Model\Board\Board.cs" />
+    <Compile Include="Model\Cell\Cell.cs" />
     <Compile Include="Constants\BoardConstants.cs" />
     <Compile Include="Constants\ViewConstants.cs" />
     <Compile Include="GUI\Form1.cs">
@@ -65,7 +65,7 @@
     <Compile Include="GUI\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Board\Position.cs" />
+    <Compile Include="Model\Position\Position.cs" />
     <Compile Include="GUI\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GUI\Form1.resx">
@@ -93,8 +93,6 @@
   <ItemGroup>
     <None Include="GUI\App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Maze\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

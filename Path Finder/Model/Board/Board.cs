@@ -1,4 +1,5 @@
 ﻿using Path_Finder.Constants;
+using Path_Finder.Algorithms;
 
 namespace Path_Finder.Grid
 {
@@ -7,9 +8,6 @@ namespace Path_Finder.Grid
         private readonly Cell[,] grid;
 
         private bool bombSet;
-        public bool startP { get; private set; }
-        public bool endP { get; private set; }
-        public bool bombP { get; private set; }
 
         private Position previousPosition = new Position(0, 0);
 
@@ -47,6 +45,34 @@ namespace Path_Finder.Grid
         public Position GetEndPosition() => endPosition;
 
         public Position GetBombPosition() => bombPosition;
+
+/*        public void AssignValues(bool bBFS, bool bDFS, bool bASTAR, bool bDIJKSTRA)
+        {
+            (bfs, dfs, aStar, dijkstra) = (bBFS, bDFS, bASTAR, bDIJKSTRA);
+        }
+
+        public bool SetAlgorithm(string algoName)
+        {
+            switch (algoName)
+            {
+                case "BFS":
+                    AssignValues(true, false, false, false);
+                    break;
+                case "DFS":
+                    AssignValues(false, true, false, false);
+                    break;
+                case "AStar":
+                    AssignValues(false, false, true, false);
+                    break;
+                case "Dijkstra":
+                    AssignValues(false, false, false, true);
+                    break;
+                default:
+                    AssignValues(false, false, false, false);
+                    break;
+            }
+
+        }*/
 
         public bool InsideTheBoard(int posX, int posY)
         {
