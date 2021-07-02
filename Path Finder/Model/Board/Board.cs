@@ -1,4 +1,6 @@
-﻿using Path_Finder.Constants;
+﻿using System.Collections.Generic;
+
+using Path_Finder.Constants;
 using Path_Finder.Algorithms;
 
 namespace Path_Finder.Grid
@@ -7,8 +9,12 @@ namespace Path_Finder.Grid
     {
         private readonly Cell[,] grid;
 
-        private bool bombSet;
+        public bool BombSet { get; private set; }
 
+        public bool pathFound { get; private set; }
+
+        private bool bfs, dfs, aStar, dijkstra;
+       
         private Position previousPosition = new Position(0, 0);
 
         private Position startPosition = new Position
@@ -46,12 +52,21 @@ namespace Path_Finder.Grid
 
         public Position GetBombPosition() => bombPosition;
 
-/*        public void AssignValues(bool bBFS, bool bDFS, bool bASTAR, bool bDIJKSTRA)
+        public bool InsideTheBoard(int posX, int posY)
+        {
+            if(posX >= BoardConstants.MARGIN && posX <= BoardConstants.WIDTH - BoardConstants.MARGIN && 
+                posY >= 85 && posY <= BoardConstants.HEIGHT - BoardConstants.MARGIN)
+            {
+                return true;
+            }
+            return false;
+        }
+        private void AssignValues(bool bBFS, bool bDFS, bool bASTAR, bool bDIJKSTRA)
         {
             (bfs, dfs, aStar, dijkstra) = (bBFS, bDFS, bASTAR, bDIJKSTRA);
         }
 
-        public bool SetAlgorithm(string algoName)
+        public void SetAlgorithm(string algoName)
         {
             switch (algoName)
             {
@@ -68,22 +83,14 @@ namespace Path_Finder.Grid
                     AssignValues(false, false, false, true);
                     break;
                 default:
-                    AssignValues(false, false, false, false);
                     break;
             }
-
-        }*/
-
-        public bool InsideTheBoard(int posX, int posY)
-        {
-            if(posX >= BoardConstants.MARGIN && posX <= BoardConstants.WIDTH - BoardConstants.MARGIN && 
-                posY >= 85 && posY <= BoardConstants.HEIGHT - BoardConstants.MARGIN)
-            {
-                return true;
-            }
-            return false;
         }
 
+        public bool AnyAlgorithmSet()
+        {
+            return bfs || dfs || aStar || dijkstra;
+        }
 
         // Return true if the position is taken by the start or end position
         public bool IsTaken(int posX, int posY)
@@ -139,7 +146,16 @@ namespace Path_Finder.Grid
             }
             return false;
         }
-
+/*
+        public bool IsValidPosition(int posX, int posY)
+        {
+            if(IsStartPosition(posX, posY) || IsEndPosition(posX, posY) || IsWall(posX,posY))
+            {
+                return false;
+            }
+            return true;
+        }
+*/
         public void SetCell(int row, int column, CellType givenType)
         {
             grid[row, column] = new Cell
@@ -240,7 +256,7 @@ namespace Path_Finder.Grid
 
         public bool IsBombSet()
         {
-            if (bombSet)
+            if (BombSet)
             {
                 return true;
             }
@@ -253,7 +269,7 @@ namespace Path_Finder.Grid
             // Set the bomb to its original spot
             bombPosition = new Position((BoardConstants.STARTXSQUARE + BoardConstants.ENDXSQUARE) / 2, 
                                                                         BoardConstants.YSQUARE / 2);
-            bombSet = false;
+            BombSet = false;
         }
 
         public void AddBomb()
@@ -261,9 +277,55 @@ namespace Path_Finder.Grid
             if(!IsTaken(bombPosition.x, bombPosition.y))
             {
                 grid[bombPosition.y, bombPosition.x].type = CellType.BOMB;
-                bombSet = true;
+                BombSet = true;
             }
         }
 
+        private Algorithm SelectedAlgorithm()
+        {
+            if (bfs) return Algorithm.BFS;
+            else if (dfs) return Algorithm.DFS;
+            else if (aStar) return Algorithm.AStar;
+            else return Algorithm.Dijkstra;
+        }
+
+        public (List<Position>, List<Position>) GetSearchPath()
+        {
+            Algorithm searchAlgo = SelectedAlgorithm();
+            List<Position> finalPath = new List<Position>();
+            List<Position> visitedPositions = new List<Position>();
+
+            switch (searchAlgo)
+            {
+                case Algorithm.BFS:
+                    (finalPath, visitedPositions) = BFS();
+                    break;
+                case Algorithm.DFS:
+                    (finalPath, visitedPositions) = DFS();
+                    break;
+                default:
+                    break;
+            }
+            if(finalPath.Count != 0)
+            {
+                pathFound = true;
+            }else
+            {
+                pathFound = false;
+            }
+            return (finalPath, visitedPositions);
+        }
+
+        public (List<Position>, List<Position>) BFS()
+        {
+            BreadthFirst bfsSearch = new BreadthFirst();
+            return bfsSearch.Search(startPosition, endPosition, grid);
+        }
+
+        public (List<Position>, List<Position>) DFS()
+        {
+            DepthFirst dfsSearch = new DepthFirst();
+            return dfsSearch.Search(startPosition, endPosition, grid);
+        }
     }
 }

@@ -4,6 +4,10 @@ using Path_Finder.Grid;
 
 namespace Path_Finder.Algorithms
 {
+    public enum Algorithm
+    {
+        BFS, DFS, AStar, Dijkstra
+    }
     abstract class GraphSearch
     {
         public List<Position> path = new List<Position>();
@@ -13,6 +17,7 @@ namespace Path_Finder.Algorithms
         protected int[] directionR = { -1, 1, 0, 0 };
         protected int[] directionC = { 0, 0, 1, -1 };
 
+
         /// <summary>
         /// Search function returns the List of the positions from the start to 
         /// end position using different graph search algorithms. 
@@ -21,7 +26,7 @@ namespace Path_Finder.Algorithms
         /// <param name="end"></param>
         /// <param name="grid"></param>
         /// <returns></returns>
-        public abstract List<Position> Search(Position start, Position end, Cell[,] grid);
+        public abstract (List<Position>, List<Position>) Search(Position start, Position end, Cell[,] grid);
 
         /// <summary>
         /// NeighbourTraversal explores the neighbours of the node (position)

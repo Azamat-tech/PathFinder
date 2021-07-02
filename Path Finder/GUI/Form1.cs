@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Path_Finder.Grid;
@@ -11,11 +12,17 @@ namespace Path_Finder.GUI
     /// </summary>
     public partial class Form1 : Form
     {
+        private List<Position> path = new List<Position>();
+        private List<Position> allVisitedPositions = new List<Position>();
+
+        Timer timer;
+
         private readonly Pen pen = new Pen(Brushes.Gray, 2);
         private readonly StringFormat format = new StringFormat();
         private readonly Font font = new Font("Times New Roman", 11);
         private readonly Board board = new Board();
 
+        private bool isTime, isVisualize;
         private bool isMouseDown, isStartMoving, isEndMoving, isWallMoving, isBombMoving;
 
         private readonly Button clearButton;
@@ -26,15 +33,21 @@ namespace Path_Finder.GUI
         {
             InitializeComponent();
 
+            #region Initialize Timer
+            timer = new Timer { Interval = 50 };
+            timer.Enabled = true;
+            timer.Tick += new EventHandler(OnTimerEvent);
+            #endregion
+
             #region Adding menu
 
             ToolStripMenuItem[] algorithms =
             {
-                new ToolStripMenuItem("Breadth-First Search", null),
-                new ToolStripMenuItem("Depth-First Search", null),
+                new ToolStripMenuItem("Breadth-First Search", null, BFS),
+                new ToolStripMenuItem("Depth-First Search", null, DFS),
                 // new ToolStripMenuItem("Depth-First Search Smart", null),
-                new ToolStripMenuItem("A* Search", null),
-                new ToolStripMenuItem("Dijkstra's Algorithm", null),
+                new ToolStripMenuItem("A* Search", null, AStar),
+                new ToolStripMenuItem("Dijkstra's Algorithm", null, Dijkstra),
             };
 
             ToolStripMenuItem[] mazeGenerators =
@@ -83,37 +96,6 @@ namespace Path_Finder.GUI
                 );
             #endregion
 
-/*            void BFS(object sender, EventArgs args)
-            {
-                if (board.SetAlgorithm("BFS"))
-                {
-
-                }
-            }
-
-            void DFS(object sender, EventArgs args)
-            {
-                if (board.SetAlgorithm("DFS"))
-                {
-
-                }
-            }
-
-            void AStar(object sender, EventArgs args)
-            {
-                if (board.SetAlgorithm("AStar"))
-                {
-
-                }
-            } 
-
-            void Dijkstra(object sender, EventArgs args)
-            {
-                if (board.SetAlgorithm("Dijkstra"))
-                {
-
-                }
-            }*/
             #region Adding Labels
 
             CreateTextLabel
@@ -167,7 +149,25 @@ namespace Path_Finder.GUI
         }
 
         #region Algorithm Events
+        void BFS(object sender, EventArgs args)
+        {
+            board.SetAlgorithm("BFS");
+        }
 
+        void DFS(object sender, EventArgs args)
+        {
+            board.SetAlgorithm("DFS");
+        }
+
+        void AStar(object sender, EventArgs args)
+        {
+            board.SetAlgorithm("AStar");
+        }
+
+        void Dijkstra(object sender, EventArgs args)
+        {
+            board.SetAlgorithm("Dijkstra");
+        }
         #endregion
 
         private void CreateTextLabel(string name, int posX, int posY, int width, int height)
@@ -206,12 +206,11 @@ namespace Path_Finder.GUI
             }
             else if (name == ViewConstants.visualizeName)
             {
-                
+                button.Click += new EventHandler(Visualize);
+                button.BackColor = Color.Red;
             }
             return button;
         }
-
-
 
         private void ClearBoard(Object sender, EventArgs args)
         {
@@ -244,6 +243,25 @@ namespace Path_Finder.GUI
                 addRemoveButton.Click += AddBomb;
                 Invalidate();
             }
+        }
+
+        private void Visualize(Object sender, EventArgs args)
+        {
+            if (!board.AnyAlgorithmSet())
+            {
+                MessageBox.Show("The Algorithm should be selected");
+            } 
+            else
+            {
+                isVisualize = true;
+                (path, allVisitedPositions) = board.GetSearchPath();
+
+            }
+        }
+
+        private void OnTimerEvent(Object sender, EventArgs args)
+        {
+
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
@@ -339,6 +357,14 @@ namespace Path_Finder.GUI
 
             DrawToolBoxItems(g);
 
+            if (board.AnyAlgorithmSet())
+            {
+                visualizeButton.BackColor = Color.Lime;
+            } else
+            {
+                visualizeButton.BackColor = Color.Red;
+            }
+
             DrawStartPosition
                 (
                     g, board.GetStartingPosition().x * BoardConstants.SQUARE + BoardConstants.MARGIN,
@@ -360,6 +386,38 @@ namespace Path_Finder.GUI
                     );
             }
             DrawWalls(g);
+
+            if(isTime && isVisualize)
+            {
+                DrawAllVisitedPositions(e, g);
+            }
+        }
+
+        private void DrawAllVisitedPositions(PaintEventArgs e, Graphics g)
+        {
+            Rectangle r;
+            for(int i = 0; i < allVisitedPositions.Count; i++)
+            {
+                r = new Rectangle
+                    (
+                        allVisitedPositions[i].x * BoardConstants.SQUARE + BoardConstants.MARGIN,
+                        allVisitedPositions[i].y * BoardConstants.SQUARE + BoardConstants.MARGIN,
+                        BoardConstants.SQUARE, BoardConstants.SQUARE
+                    );
+                g.FillRectangle(Brushes.PowderBlue, r);
+            }
+
+            for(int i = 0; i < path.Count; i++)
+            {
+                r = new Rectangle
+                    (
+                        path[i].x * BoardConstants.SQUARE + BoardConstants.MARGIN,
+                        path[i].y * BoardConstants.SQUARE + BoardConstants.MARGIN,
+                        BoardConstants.SQUARE, BoardConstants.SQUARE
+                    );
+                g.FillRectangle(Brushes.Tomato, r);
+            }
+
         }
 
         private void DrawToolBoxBorders(Graphics g, Position from, Position to)

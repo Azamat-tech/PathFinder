@@ -65,7 +65,7 @@ namespace Path_Finder.Algorithms
         }
 
 
-        public sealed override List<Position> Search(Position start, Position end, Cell[,] grid)
+        public sealed override (List<Position>, List<Position>) Search(Position start, Position end, Cell[,] grid)
         {
             queue.Enqueue(start);
             grid[start.y, start.x].visited = true;
@@ -85,7 +85,7 @@ namespace Path_Finder.Algorithms
             {
                 GetPath(start, end, grid);
             }
-            return path;
+            return (path, allVisistedPositions);
         }
     }
 }
