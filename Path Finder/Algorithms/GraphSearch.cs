@@ -8,10 +8,10 @@ namespace Path_Finder.Algorithms
 {
     abstract class GraphSearch
     {
-        public bool reached; 
         public List<Position> path;
         public List<Position> allVisistedPositions;
 
+        protected bool reached;
         protected int[] directionR = { -1, 1, 0, 0 };
         protected int[] directionC = { 0, 0, 1, -1 };
 
