@@ -342,6 +342,11 @@ namespace Path_Finder.GUI
             Graphics g = e.Graphics;
             DrawBoard(g);
 
+            if (isVisualize)
+            {
+                DrawAllVisitedPositions(e, g);
+            }
+
             DrawGrid(g);
 
             DrawToolBoxBorders
@@ -390,22 +395,25 @@ namespace Path_Finder.GUI
                     );
             }
             DrawWalls(g);
-
-            if(isVisualize)
-            {
-                DrawAllVisitedPositions(e, g);
-            }
         }
-
         private void DrawAllVisitedPositions(PaintEventArgs e, Graphics g)
         {
             Rectangle r;
+            int valueX, valueY;
             for(int i = 0; i < allVisitedPositions.Count; i++)
             {
+                valueX = allVisitedPositions[i].x * BoardConstants.SQUARE + BoardConstants.MARGIN;
+                valueY = allVisitedPositions[i].y * BoardConstants.SQUARE +
+                         BoardConstants.MARGIN;
+
+                if (board.IsPositionOnTheGrid(valueX, valueY))
+                {
+                    continue;
+                }
+
                 r = new Rectangle
                     (
-                        allVisitedPositions[i].x * BoardConstants.SQUARE + BoardConstants.MARGIN,
-                        allVisitedPositions[i].y * BoardConstants.SQUARE + BoardConstants.MARGIN,
+                        valueX, valueY,
                         BoardConstants.SQUARE, BoardConstants.SQUARE
                     );
                 g.FillRectangle(Brushes.PowderBlue, r);
@@ -413,10 +421,16 @@ namespace Path_Finder.GUI
 
             for(int i = 0; i < path.Count; i++)
             {
+                valueX = path[i].x * BoardConstants.SQUARE + BoardConstants.MARGIN;
+                valueY = path[i].y * BoardConstants.SQUARE + BoardConstants.MARGIN;
+
+                if (board.IsPositionOnTheGrid(valueX, valueY))
+                {
+                    continue;
+                }
                 r = new Rectangle
                     (
-                        path[i].x * BoardConstants.SQUARE + BoardConstants.MARGIN,
-                        path[i].y * BoardConstants.SQUARE + BoardConstants.MARGIN,
+                        valueX, valueY,
                         BoardConstants.SQUARE, BoardConstants.SQUARE
                     );
                 g.FillRectangle(Brushes.Tomato, r);

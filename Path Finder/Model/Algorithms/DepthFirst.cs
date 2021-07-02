@@ -24,8 +24,8 @@ namespace Path_Finder.Algorithms
                                         current.y + directionC[i]
                                     );
                 // Checking the bounds of the grid
-                if (neighbour.y < 0 || neighbour.x < 0 || neighbour.y > BoardConstants.ROWSIZE ||
-                    neighbour.x > BoardConstants.COLUMNSIZE)
+                if (neighbour.y < 0 || neighbour.x < 0 || neighbour.y >= BoardConstants.ROWSIZE ||
+                    neighbour.x >= BoardConstants.COLUMNSIZE)
                 {
                     continue;
                 }

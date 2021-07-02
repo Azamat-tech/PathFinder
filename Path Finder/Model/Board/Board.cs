@@ -146,6 +146,17 @@ namespace Path_Finder.Grid
             }
             return false;
         }
+
+        public bool IsPositionOnTheGrid(int posX, int posY)
+        {
+            if (posY >= BoardConstants.SQUARE * BoardConstants.ROWSIZE ||
+                posX >= BoardConstants.SQUARE * BoardConstants.COLUMNSIZE ||
+                posY < BoardConstants.SQUARE * 4 || posX < 0)
+            {
+                return true;
+            }
+            return false;
+        }
 /*
         public bool IsValidPosition(int posX, int posY)
         {
