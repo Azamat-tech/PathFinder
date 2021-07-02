@@ -15,14 +15,14 @@ namespace Path_Finder.GUI
         private List<Position> path = new List<Position>();
         private List<Position> allVisitedPositions = new List<Position>();
 
-        Timer timer;
+        private readonly Timer timer;
 
         private readonly Pen pen = new Pen(Brushes.Gray, 2);
         private readonly StringFormat format = new StringFormat();
         private readonly Font font = new Font("Times New Roman", 11);
         private readonly Board board = new Board();
 
-        private bool isTime, isVisualize;
+        private bool isVisualize;
         private bool isMouseDown, isStartMoving, isEndMoving, isWallMoving, isBombMoving;
 
         private readonly Button clearButton;
@@ -257,11 +257,15 @@ namespace Path_Finder.GUI
                 (path, allVisitedPositions) = board.GetSearchPath();
 
             }
+            Invalidate();
         }
 
         private void OnTimerEvent(Object sender, EventArgs args)
         {
-
+            if (isVisualize)
+            {
+                Invalidate();
+            }
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
@@ -387,7 +391,7 @@ namespace Path_Finder.GUI
             }
             DrawWalls(g);
 
-            if(isTime && isVisualize)
+            if(isVisualize)
             {
                 DrawAllVisitedPositions(e, g);
             }
