@@ -214,6 +214,9 @@ namespace Path_Finder.GUI
 
         private void ClearBoard(Object sender, EventArgs args)
         {
+            isVisualize = false;
+            board.SetAlgorithm("None");
+
             RemoveBomb(sender, args);
             board.ClearBoard();
             Invalidate();
@@ -255,9 +258,14 @@ namespace Path_Finder.GUI
             {
                 isVisualize = true;
                 (path, allVisitedPositions) = board.GetSearchPath();
-
+                if(!board.PathFound)
+                {
+                    MessageBox.Show("The path was not found");
+                }else
+                {
+                    Invalidate();
+                }
             }
-            Invalidate();
         }
 
         private void OnTimerEvent(Object sender, EventArgs args)
@@ -406,7 +414,7 @@ namespace Path_Finder.GUI
                 valueY = allVisitedPositions[i].y * BoardConstants.SQUARE +
                          BoardConstants.MARGIN;
 
-                if (board.IsPositionOnTheGrid(valueX, valueY))
+                if (!board.IsPositionOnTheGrid(valueX, valueY))
                 {
                     continue;
                 }
@@ -424,7 +432,7 @@ namespace Path_Finder.GUI
                 valueX = path[i].x * BoardConstants.SQUARE + BoardConstants.MARGIN;
                 valueY = path[i].y * BoardConstants.SQUARE + BoardConstants.MARGIN;
 
-                if (board.IsPositionOnTheGrid(valueX, valueY))
+                if (!board.IsPositionOnTheGrid(valueX, valueY))
                 {
                     continue;
                 }

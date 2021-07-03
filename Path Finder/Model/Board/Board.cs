@@ -11,7 +11,7 @@ namespace Path_Finder.Grid
 
         public bool BombSet { get; private set; }
 
-        public bool pathFound { get; private set; }
+        public bool PathFound { get; private set; }
 
         private bool bfs, dfs, aStar, dijkstra;
        
@@ -37,7 +37,7 @@ namespace Path_Finder.Grid
             {
                 for(int j = 0; j < BoardConstants.COLUMNSIZE; j++)
                 {
-                    SetCell(i, j, CellType.EMPTY);
+                    SetCell(i, j, CellType.EMPTY, false);
                 }
             }
             SetStartPosition(BoardConstants.STARTXSQUARE, BoardConstants.YSQUARE);
@@ -60,36 +60,6 @@ namespace Path_Finder.Grid
                 return true;
             }
             return false;
-        }
-        private void AssignValues(bool bBFS, bool bDFS, bool bASTAR, bool bDIJKSTRA)
-        {
-            (bfs, dfs, aStar, dijkstra) = (bBFS, bDFS, bASTAR, bDIJKSTRA);
-        }
-
-        public void SetAlgorithm(string algoName)
-        {
-            switch (algoName)
-            {
-                case "BFS":
-                    AssignValues(true, false, false, false);
-                    break;
-                case "DFS":
-                    AssignValues(false, true, false, false);
-                    break;
-                case "AStar":
-                    AssignValues(false, false, true, false);
-                    break;
-                case "Dijkstra":
-                    AssignValues(false, false, false, true);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public bool AnyAlgorithmSet()
-        {
-            return bfs || dfs || aStar || dijkstra;
         }
 
         // Return true if the position is taken by the start or end position
@@ -153,26 +123,29 @@ namespace Path_Finder.Grid
                 posX >= BoardConstants.SQUARE * BoardConstants.COLUMNSIZE ||
                 posY < BoardConstants.SQUARE * 4 || posX < 0)
             {
-                return true;
-            }
-            return false;
-        }
-/*
-        public bool IsValidPosition(int posX, int posY)
-        {
-            if(IsStartPosition(posX, posY) || IsEndPosition(posX, posY) || IsWall(posX,posY))
-            {
                 return false;
             }
             return true;
         }
-*/
-        public void SetCell(int row, int column, CellType givenType)
+        /*
+                public bool IsValidPosition(int posX, int posY)
+                {
+                    if(IsStartPosition(posX, posY) || IsEndPosition(posX, posY) || IsWall(posX,posY))
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+        */
+        public void SetCell(int row, int column, CellType givenType, bool isVisited = false)
         {
             grid[row, column] = new Cell
             {
+                // Did not define the parent property of the Cell
+                // as it does not have any for now.
                 position = new Position(column, row),
-                type = givenType
+                type = givenType,
+                visited = isVisited
             };
         }
 
@@ -182,9 +155,9 @@ namespace Path_Finder.Grid
             {
                 if(grid[startPosition.y, startPosition.x].type == CellType.START)
                 {
-                    grid[startPosition.y, startPosition.x].type = CellType.EMPTY;
+                    SetCell(startPosition.y, startPosition.x, CellType.EMPTY);
                 }
-                grid[posY, posX].type = CellType.START;
+                SetCell(posY, posX, CellType.START);
                 startPosition = new Position(posX, posY);
             }
         }
@@ -195,9 +168,9 @@ namespace Path_Finder.Grid
             {
                 if(grid[endPosition.y, endPosition.x].type == CellType.END)
                 {
-                    grid[endPosition.y, endPosition.x].type = CellType.EMPTY;
+                    SetCell(endPosition.y, endPosition.x, CellType.EMPTY);
                 }
-                grid[posY, posX].type = CellType.END;
+                SetCell(posY, posX, CellType.END);
                 endPosition = new Position(posX, posY);
             }
         }
@@ -206,8 +179,8 @@ namespace Path_Finder.Grid
         {
             if (IsEmpty(posX, posY))
             {
-                grid[bombPosition.y, bombPosition.x].type = CellType.EMPTY;
-                grid[posY, posX].type = CellType.BOMB;
+                SetCell(bombPosition.y, bombPosition.x, CellType.EMPTY);
+                SetCell(posY, posX, CellType.BOMB);
                 bombPosition = new Position(posX, posY);
             }
         }
@@ -216,13 +189,13 @@ namespace Path_Finder.Grid
         {
             if (justPress)
             {
-                grid[posY, posX].type = CellType.WALL;
+                SetCell(posY, posX, CellType.WALL);
             }
             else
             {
                 if (previousPosition.x != posX || previousPosition.y != posY)
                 {
-                    grid[posY, posX].type = CellType.WALL;
+                    SetCell(posY, posX, CellType.WALL);
                     previousPosition = new Position(posX, posY);
                 }
             }
@@ -232,12 +205,12 @@ namespace Path_Finder.Grid
         {
             if(justPress)
             {
-                grid[posY, posX].type = CellType.EMPTY;
+                SetCell(posY, posX, CellType.EMPTY);
             }else
             {
                 if(previousPosition.x != posX || previousPosition.y != posY)
                 {
-                    grid[posY, posX].type = CellType.EMPTY;
+                    SetCell(posY, posX, CellType.EMPTY);
                     previousPosition = new Position(posX, posY);
                 }
             }
@@ -250,9 +223,9 @@ namespace Path_Finder.Grid
             {
                 for(int j = 0; j < BoardConstants.COLUMNSIZE; j++)
                 {
-                    if(grid[i, j].type != CellType.EMPTY)
+                    if (grid[i, j].type != CellType.EMPTY || grid[i, j].visited)
                     {
-                        grid[i, j].type = CellType.EMPTY;
+                        SetCell(i, j, CellType.EMPTY, false);
                     }
                 }
             }
@@ -276,7 +249,7 @@ namespace Path_Finder.Grid
 
         public void RemoveBomb()
         {
-            grid[bombPosition.y, bombPosition.x].type = CellType.EMPTY;
+            SetCell(bombPosition.y, bombPosition.x, CellType.EMPTY);
             // Set the bomb to its original spot
             bombPosition = new Position((BoardConstants.STARTXSQUARE + BoardConstants.ENDXSQUARE) / 2, 
                                                                         BoardConstants.YSQUARE / 2);
@@ -287,9 +260,41 @@ namespace Path_Finder.Grid
         {
             if(!IsTaken(bombPosition.x, bombPosition.y))
             {
-                grid[bombPosition.y, bombPosition.x].type = CellType.BOMB;
+                SetCell(bombPosition.y, bombPosition.x, CellType.BOMB);
                 BombSet = true;
             }
+        }
+
+        private void AssignAlgoValues(bool bBFS, bool bDFS, bool bASTAR, bool bDIJKSTRA)
+        {
+            (bfs, dfs, aStar, dijkstra) = (bBFS, bDFS, bASTAR, bDIJKSTRA);
+        }
+
+        public void SetAlgorithm(string algoName)   
+        {
+            switch (algoName)
+            {
+                case "BFS":
+                    AssignAlgoValues(true, false, false, false);
+                    break;
+                case "DFS":
+                    AssignAlgoValues(false, true, false, false);
+                    break;
+                case "AStar":
+                    AssignAlgoValues(false, false, true, false);
+                    break;
+                case "Dijkstra":
+                    AssignAlgoValues(false, false, false, true);
+                    break;
+                default:
+                    AssignAlgoValues(false, false, false, false);
+                    break;
+            }
+        }
+
+        public bool AnyAlgorithmSet()
+        {
+            return bfs || dfs || aStar || dijkstra;
         }
 
         private Algorithm SelectedAlgorithm()
@@ -319,10 +324,10 @@ namespace Path_Finder.Grid
             }
             if(finalPath.Count != 0)
             {
-                pathFound = true;
+                PathFound = true;
             }else
             {
-                pathFound = false;
+                PathFound = false;
             }
             return (finalPath, visitedPositions);
         }
