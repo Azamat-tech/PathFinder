@@ -53,6 +53,8 @@
     <Compile Include="Model\Algorithms\Dijkstra.cs" />
     <Compile Include="Model\Algorithms\GraphSearch.cs" />
     <Compile Include="Model\Algorithms\InformedSearch.cs" />
+    <Compile Include="Model\Algorithms\PriorityQueue\BinaryHeap.cs" />
+    <Compile Include="Model\Algorithms\PriorityQueue\PriorityQueue.cs" />
     <Compile Include="Model\Algorithms\UniformSearch.cs" />
     <Compile Include="Model\Algorithms\UninformedSearch.cs" />
     <Compile Include="Model\Board\Board.cs" />

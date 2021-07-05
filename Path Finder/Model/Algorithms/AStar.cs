@@ -2,7 +2,7 @@
 
 namespace Path_Finder.Algorithms
 {
-    class AStar
+    class AStar : InformedSearch
     {
 
     }

@@ -170,19 +170,6 @@ namespace Path_Finder.GUI
         }
         #endregion
 
-        private void CreateTextLabel(string name, int posX, int posY, int width, int height)
-        {
-            Label label = new Label();
-            this.Controls.Add(label);
-            label.Name = name;
-            label.Text = name;
-            label.Location = new Point(posX, posY);
-            label.Height = height;
-            label.Width = width;
-            label.Font = font;
-            label.AutoSize = true;
-        }
-
         private Button CreateButton(string name, int posX, int posY, int width, int height)
         {
             Button button = new Button();
@@ -210,6 +197,19 @@ namespace Path_Finder.GUI
                 button.BackColor = Color.Red;
             }
             return button;
+        }
+
+        private void CreateTextLabel(string name, int posX, int posY, int width, int height)
+        {
+            Label label = new Label();
+            this.Controls.Add(label);
+            label.Name = name;
+            label.Text = name;
+            label.Location = new Point(posX, posY);
+            label.Height = height;
+            label.Width = width;
+            label.Font = font;
+            label.AutoSize = true;
         }
 
         private void ClearBoard(Object sender, EventArgs args)
@@ -257,7 +257,12 @@ namespace Path_Finder.GUI
             else
             {
                 isVisualize = true;
+                // Before calling any search algorithms, reset the visited 
+                // property in each Cell of the grid
+                board.ResetVisitedPropertyInCell();
+
                 (path, allVisitedPositions) = board.GetSearchPath();
+
                 if(!board.PathFound)
                 {
                     MessageBox.Show("The path was not found");
@@ -270,10 +275,10 @@ namespace Path_Finder.GUI
 
         private void OnTimerEvent(Object sender, EventArgs args)
         {
-            if (isVisualize)
+/*            if (isVisualize)
             {
                 Invalidate();
-            }
+            }*/
         }
 
         protected override void OnMouseDown(MouseEventArgs e)

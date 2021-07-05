@@ -136,6 +136,20 @@ namespace Path_Finder.Grid
                     return true;
                 }
         */
+        public void ResetVisitedPropertyInCell()
+        {
+            for(int i = 0; i < BoardConstants.ROWSIZE; i++)
+            {
+                for(int j = 0; j < BoardConstants.COLUMNSIZE; j++)
+                {
+                    if (grid[i, j].visited) 
+                    {
+                        grid[i, j].visited = false;
+                    }
+                }
+            }
+        }
+
         public void SetCell(int row, int column, CellType givenType, bool isVisited = false)
         {
             grid[row, column] = new Cell
