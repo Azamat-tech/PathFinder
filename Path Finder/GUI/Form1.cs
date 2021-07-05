@@ -281,21 +281,20 @@ namespace Path_Finder.GUI
             Position position = new Position
                         (
                             (e.X - BoardConstants.MARGIN) / BoardConstants.SQUARE, 
-                            (e.Y - BoardConstants.MARGIN) / BoardConstants.SQUARE
+                            (e.Y - ViewConstants.LEFTOVER) / BoardConstants.SQUARE
                         );
-            
+
             if (board.InsideTheBoard(e.X, e.Y))
             {
                 if(board.IsEmpty(position.x, position.y))
                 {
                     board.SetWall(position.x, position.y);
-                    Invalidate();
                 }
                 else if(board.IsWall(position.x, position.y))
                 {
                     board.RemoveWall(position.x, position.y);
-                    Invalidate();
                 }
+                Invalidate();
                 isMouseDown = true;
             }
         }
@@ -305,7 +304,7 @@ namespace Path_Finder.GUI
             Position position = new Position
                     (
                         (e.X - BoardConstants.MARGIN) / BoardConstants.SQUARE, 
-                        (e.Y - BoardConstants.MARGIN) / BoardConstants.SQUARE
+                        (e.Y - ViewConstants.LEFTOVER) / BoardConstants.SQUARE 
                     );
             
             if (isMouseDown && board.InsideTheBoard(e.X, e.Y))
@@ -367,8 +366,7 @@ namespace Path_Finder.GUI
                     new Position
                     (
                         7 * ViewConstants.BUTTONWIDTH - 2 * BoardConstants.SQUARE, 
-                        BoardConstants.MARGIN + BoardConstants.SQUARE + 
-                        BoardConstants.TOOLBOXHEIGHT - BoardConstants.SQUARE + BoardConstants.MARGIN
+                        BoardConstants.MARGIN + BoardConstants.TOOLBOXHEIGHT + BoardConstants.MARGIN
                     )
                 );
 
@@ -385,13 +383,13 @@ namespace Path_Finder.GUI
             DrawStartPosition
                 (
                     g, board.GetStartingPosition().x * BoardConstants.SQUARE + BoardConstants.MARGIN,
-                    board.GetStartingPosition().y * BoardConstants.SQUARE + BoardConstants.MARGIN
+                    board.GetStartingPosition().y * BoardConstants.SQUARE + ViewConstants.LEFTOVER
                 );
 
             DrawEndPosition
                 (
                     g, board.GetEndPosition().x * BoardConstants.SQUARE + BoardConstants.MARGIN,
-                    board.GetEndPosition().y * BoardConstants.SQUARE + BoardConstants.MARGIN
+                    board.GetEndPosition().y * BoardConstants.SQUARE + ViewConstants.LEFTOVER
                 );
 
             if(board.IsBombSet())
@@ -399,7 +397,7 @@ namespace Path_Finder.GUI
                 DrawEllipseRectange
                     (
                         g, board.GetBombPosition().x * BoardConstants.SQUARE + BoardConstants.MARGIN,
-                        board.GetBombPosition().y * BoardConstants.SQUARE + BoardConstants.MARGIN
+                        board.GetBombPosition().y * BoardConstants.SQUARE + ViewConstants.LEFTOVER
                     );
             }
             DrawWalls(g);
@@ -407,14 +405,16 @@ namespace Path_Finder.GUI
         private void DrawAllVisitedPositions(PaintEventArgs e, Graphics g)
         {
             Rectangle r;
+            int x, y;
             int valueX, valueY;
             for(int i = 0; i < allVisitedPositions.Count; i++)
             {
-                valueX = allVisitedPositions[i].x * BoardConstants.SQUARE + BoardConstants.MARGIN;
-                valueY = allVisitedPositions[i].y * BoardConstants.SQUARE +
-                         BoardConstants.MARGIN;
+                x = allVisitedPositions[i].x;
+                y = allVisitedPositions[i].y;
+                valueX = x * BoardConstants.SQUARE + BoardConstants.MARGIN;
+                valueY = y * BoardConstants.SQUARE + ViewConstants.LEFTOVER;
 
-                if (!board.IsPositionOnTheGrid(valueX, valueY))
+                if (!board.InsideTheBoard(valueX, valueY) || board.IsTaken(x, y))
                 {
                     continue;
                 }
@@ -429,10 +429,12 @@ namespace Path_Finder.GUI
 
             for(int i = 0; i < path.Count; i++)
             {
-                valueX = path[i].x * BoardConstants.SQUARE + BoardConstants.MARGIN;
-                valueY = path[i].y * BoardConstants.SQUARE + BoardConstants.MARGIN;
+                x = path[i].x;
+                y = path[i].y;
+                valueX = x * BoardConstants.SQUARE + BoardConstants.MARGIN;
+                valueY = y * BoardConstants.SQUARE + ViewConstants.LEFTOVER;
 
-                if (!board.IsPositionOnTheGrid(valueX, valueY))
+                if (!board.InsideTheBoard(valueX, valueY) || board.IsTaken(x, y))
                 {
                     continue;
                 }
@@ -463,7 +465,7 @@ namespace Path_Finder.GUI
                         g.FillRectangle
                             (
                                 Brushes.Black, j * BoardConstants.SQUARE + BoardConstants.MARGIN,
-                                i * BoardConstants.SQUARE + BoardConstants.MARGIN, 
+                                i * BoardConstants.SQUARE + ViewConstants.LEFTOVER, 
                                 BoardConstants.SQUARE, BoardConstants.SQUARE
                             );
                     }
@@ -567,10 +569,15 @@ namespace Path_Finder.GUI
 
         private void DrawStartPosition(Graphics g, int posX, int posY)
         {
+
             format.LineAlignment = StringAlignment.Center;
             format.Alignment = StringAlignment.Center;
 
-            Rectangle startRectangle = new Rectangle(posX, posY, BoardConstants.SQUARE, BoardConstants.SQUARE);
+            Rectangle startRectangle = new Rectangle
+                                           (
+                                                posX, posY, BoardConstants.SQUARE, 
+                                                BoardConstants.SQUARE
+                                           );
 
             g.FillRectangle(Brushes.Aqua, startRectangle);
             g.DrawString("S", font, Brushes.Black, startRectangle, format);
@@ -581,7 +588,11 @@ namespace Path_Finder.GUI
             format.LineAlignment = StringAlignment.Center;
             format.Alignment = StringAlignment.Center;
 
-            Rectangle endRectangle = new Rectangle(posX, posY, BoardConstants.SQUARE, BoardConstants.SQUARE);
+            Rectangle endRectangle = new Rectangle
+                                            (
+                                                posX, posY, BoardConstants.SQUARE, 
+                                                BoardConstants.SQUARE
+                                            );
 
             g.FillRectangle(Brushes.Lime, endRectangle);
             g.DrawString("E", font, Brushes.Black, endRectangle, format);

@@ -52,10 +52,19 @@ namespace Path_Finder.Grid
 
         public Position GetBombPosition() => bombPosition;
 
-        public bool InsideTheBoard(int posX, int posY)
+        public bool InsideTheBoard(int posXPixel, int posYPixel)
         {
-            if(posX >= BoardConstants.MARGIN && posX <= BoardConstants.WIDTH - BoardConstants.MARGIN && 
-                posY >= 85 && posY <= BoardConstants.HEIGHT - BoardConstants.MARGIN)
+            if(posXPixel >= BoardConstants.MARGIN && posXPixel < BoardConstants.WIDTH - BoardConstants.MARGIN && 
+               posYPixel >= ViewConstants.LEFTOVER && posYPixel < BoardConstants.HEIGHT - BoardConstants.MARGIN)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool IsTaken(int posX, int posY)
+        {
+            if (IsTakenByStartAndEnd(posX, posY) && IsWall(posX, posY))
             {
                 return true;
             }
@@ -63,7 +72,7 @@ namespace Path_Finder.Grid
         }
 
         // Return true if the position is taken by the start or end position
-        public bool IsTaken(int posX, int posY)
+        public bool IsTakenByStartAndEnd(int posX, int posY)
         {
             if (grid[posY, posX].type == CellType.START || grid[posY, posX].type == CellType.END)
             {
@@ -117,16 +126,6 @@ namespace Path_Finder.Grid
             return false;
         }
 
-        public bool IsPositionOnTheGrid(int posX, int posY)
-        {
-            if (posY >= BoardConstants.SQUARE * BoardConstants.ROWSIZE ||
-                posX >= BoardConstants.SQUARE * BoardConstants.COLUMNSIZE ||
-                posY < BoardConstants.SQUARE * 4 || posX < 0)
-            {
-                return false;
-            }
-            return true;
-        }
         /*
                 public bool IsValidPosition(int posX, int posY)
                 {
@@ -236,6 +235,10 @@ namespace Path_Finder.Grid
             SetEndPosition(BoardConstants.ENDXSQUARE, BoardConstants.YSQUARE);
             // Remove the bomb from the Grid
             RemoveBomb();
+
+            BombSet = false;
+            PathFound = false;
+            AssignAlgoValues(false, false, false, false);
         }
 
         public bool IsBombSet()
@@ -258,7 +261,7 @@ namespace Path_Finder.Grid
 
         public void AddBomb()
         {
-            if(!IsTaken(bombPosition.x, bombPosition.y))
+            if(!IsTakenByStartAndEnd(bombPosition.x, bombPosition.y))
             {
                 SetCell(bombPosition.y, bombPosition.x, CellType.BOMB);
                 BombSet = true;

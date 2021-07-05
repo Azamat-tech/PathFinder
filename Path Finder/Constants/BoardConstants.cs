@@ -14,8 +14,8 @@
         public const int COLUMNSIZE = 75;
         public const int ROWSIZE = 35;
 
-        public const int STARTXSQUARE = 15;
-        public const int YSQUARE = 18;
+        public const int STARTXSQUARE = 18;
+        public const int YSQUARE = 14;
         public const int ENDXSQUARE = 60;
 
         public const int BOMBXSQUARE = (STARTXSQUARE + ENDXSQUARE) / 2;

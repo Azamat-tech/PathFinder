@@ -8,6 +8,8 @@
         public const int LABELWIDTH = 100;
         public const int LABELHEIGHT = 40;
 
+        public const int LEFTOVER = 85;
+
         public const string startingNodeName = "Starting Node: ";
         public const string targetNodeName = "Target Node: ";
         public const string bombNodeName = "Bomb Node: ";
