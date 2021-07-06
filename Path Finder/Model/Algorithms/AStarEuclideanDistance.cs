@@ -9,7 +9,7 @@ namespace Path_Finder.Model.Algorithms
     /// InformedUniformSearch that uses priority queue in selecting the 
     /// most optimal position.
     /// </summary>
-    class AStarEuclidianDistance : InformedSearch
+    class AStarEuclideanDistance : InformedSearch
     {
         /// <summary>
         /// AStar algorithm is a part of a informed search that utilizes the function f 

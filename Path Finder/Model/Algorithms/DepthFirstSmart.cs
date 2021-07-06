@@ -4,7 +4,7 @@ using Path_Finder.Model.Algorithms;
 using Path_Finder.Constants;
 using Path_Finder.Model.Algorithms.Heuristics;
 
-namespace Path_Finder.Algorithms
+namespace Path_Finder.Model.Algorithms
 {
     /// <summary>
     /// The implementation of smart(informed) Depth-First Search (Greedy Search) which knows

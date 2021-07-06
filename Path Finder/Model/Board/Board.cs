@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using Path_Finder.Constants;
-using Path_Finder.Algorithms;
+using Path_Finder.Model.Algorithms;
 
 namespace Path_Finder.Grid
 {
@@ -339,6 +339,15 @@ namespace Path_Finder.Grid
                 case Algorithm.Dijkstra:
                     (finalPath, visitedPositions) = Dijkstra();
                     break;
+                case Algorithm.AStarEuclidian:
+                    (finalPath, visitedPositions) = AStarEuclideanSearch();
+                    break;
+                case Algorithm.AStarManhattan:
+                    (finalPath, visitedPositions) = AStarManhattanSearch();
+                    break;
+                case Algorithm.SmartDFS:
+                    (finalPath, visitedPositions) = SmartDFS();
+                    break;
                 default:
                     break;
             }
@@ -352,6 +361,7 @@ namespace Path_Finder.Grid
             return (finalPath, visitedPositions);
         }
 
+        #region Algorithms
         private (List<Position>, List<Position>) BFS()
         {
             BreadthFirst bfsSearch = new BreadthFirst();
@@ -368,6 +378,25 @@ namespace Path_Finder.Grid
         {
             Dijkstra dijkstraAlgorithm = new Dijkstra();
             return dijkstraAlgorithm.Search(startPosition, endPosition, grid);
-        } 
+        }
+
+        private (List<Position>, List<Position>) AStarEuclideanSearch()
+        {
+            AStarEuclideanDistance aStarEuclidean = new AStarEuclideanDistance();
+            return aStarEuclidean.Search(startPosition, endPosition, grid);
+        }
+
+        private (List<Position>, List<Position>) AStarManhattanSearch()
+        {
+            AStarManhattenDistance aStarManhattan = new AStarManhattenDistance();
+            return aStarManhattan.Search(startPosition, endPosition, grid);
+        }
+
+        private (List<Position>, List<Position>) SmartDFS()
+        {
+            DepthFirstSmart smartDFS = new DepthFirstSmart();
+            return smartDFS.Search(startPosition, endPosition, grid);
+        }
+        #endregion
     }
 }

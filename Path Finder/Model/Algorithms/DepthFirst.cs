@@ -3,7 +3,7 @@
 using Path_Finder.Constants;
 using Path_Finder.Grid;
 
-namespace Path_Finder.Algorithms
+namespace Path_Finder.Model.Algorithms
 {
     /// <summary>
     /// The implementation of Depth-First Search algorithm inherited from 

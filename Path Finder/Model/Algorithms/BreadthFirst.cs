@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Path_Finder.Grid;
 using Path_Finder.Constants;
 
-namespace Path_Finder.Algorithms
+namespace Path_Finder.Model.Algorithms
 {
     /// <summary>
     /// The implementation of a Breadth-First Search algorithm that inherits 

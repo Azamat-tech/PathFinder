@@ -6,7 +6,7 @@ namespace Path_Finder.Model.Algorithms
 {
     public enum Algorithm
     {
-        BFS, DFS, AStar, Dijkstra
+        BFS, DFS, AStarEuclidian, AStarManhattan, Dijkstra, SmartDFS
     }
     abstract class GraphSearch
     {
