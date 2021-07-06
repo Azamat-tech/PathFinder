@@ -10,7 +10,7 @@ namespace Path_Finder.Model.Algorithms.PriorityQueue
     /// Every item in the priority queue is an element of type Position with 
     /// a corresponding priority of type Int.
     /// </summary>
-    class BinaryHeap : PriorityQueue<Position>
+    class BinaryHeap : IPriorityQueue<Position>
     {
         class Node
         {

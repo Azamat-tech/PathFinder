@@ -43,25 +43,6 @@ namespace Path_Finder.Algorithms
             }
         }
 
-
-        public sealed override void GetPath(Position start, Position end, Cell[,] grid)
-        {
-            Position previousPosition;
-            path.Add(end);
-            while (true)
-            {
-                previousPosition = grid[end.y, end.x].parent;
-                path.Insert(0, previousPosition);
-                end = previousPosition;
-
-                if (previousPosition == start)
-                {
-                    break;
-                }
-            }
-        }
-
-
         public sealed override (List<Position>, List<Position>) Search(Position start, Position end, Cell[,] grid)
         {
             stack.Push(start);

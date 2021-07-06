@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Path_Finder.Model.Algorithms.PriorityQueue
 {
-    interface PriorityQueue<Position>
+    interface IPriorityQueue<Position>
     {
         int Count { get; }
-        void Insert(Position pos, int priority);
         Position Extract();
+        void Insert(Position pos, int priority);
         void HeapMin(int i);
         void MinHeapify(int i);
     }

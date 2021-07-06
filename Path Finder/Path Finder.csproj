@@ -52,10 +52,9 @@
     <Compile Include="Model\Algorithms\DepthFirstSmart.cs" />
     <Compile Include="Model\Algorithms\Dijkstra.cs" />
     <Compile Include="Model\Algorithms\GraphSearch.cs" />
-    <Compile Include="Model\Algorithms\InformedSearch.cs" />
+    <Compile Include="Model\Algorithms\InformedUniformSearch.cs" />
     <Compile Include="Model\Algorithms\PriorityQueue\BinaryHeap.cs" />
-    <Compile Include="Model\Algorithms\PriorityQueue\PriorityQueue.cs" />
-    <Compile Include="Model\Algorithms\UniformSearch.cs" />
+    <Compile Include="Model\Algorithms\PriorityQueue\IPriorityQueue.cs" />
     <Compile Include="Model\Algorithms\UninformedSearch.cs" />
     <Compile Include="Model\Board\Board.cs" />
     <Compile Include="Model\Cell\Cell.cs" />

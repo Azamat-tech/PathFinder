@@ -11,6 +11,9 @@
         public Position parent { get; set; }
         public CellType type { get; set; }
         public bool visited { get; set; }
+        public int Gcost { get; set; }
+        public int Hcost { get; set; }
+        public int Fcost => Gcost + Hcost;
 
     }
 }
