@@ -336,6 +336,9 @@ namespace Path_Finder.Grid
                 case Algorithm.DFS:
                     (finalPath, visitedPositions) = DFS();
                     break;
+                case Algorithm.Dijkstra:
+                    (finalPath, visitedPositions) = Dijkstra();
+                    break;
                 default:
                     break;
             }
@@ -349,16 +352,22 @@ namespace Path_Finder.Grid
             return (finalPath, visitedPositions);
         }
 
-        public (List<Position>, List<Position>) BFS()
+        private (List<Position>, List<Position>) BFS()
         {
             BreadthFirst bfsSearch = new BreadthFirst();
             return bfsSearch.Search(startPosition, endPosition, grid);
         }
 
-        public (List<Position>, List<Position>) DFS()
+        private (List<Position>, List<Position>) DFS()
         {
             DepthFirst dfsSearch = new DepthFirst();
             return dfsSearch.Search(startPosition, endPosition, grid);
         }
+
+        private (List<Position>, List<Position>) Dijkstra()
+        {
+            Dijkstra dijkstraAlgorithm = new Dijkstra();
+            return dijkstraAlgorithm.Search(startPosition, endPosition, grid);
+        } 
     }
 }

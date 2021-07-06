@@ -1,4 +1,5 @@
-﻿
+﻿using Path_Finder.Constants;
+
 namespace Path_Finder.GUI
 {
     partial class Form1
@@ -34,7 +35,7 @@ namespace Path_Finder.GUI
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(1510, 710);
+            this.ClientSize = new System.Drawing.Size(BoardConstants.WIDTH, BoardConstants.HEIGHT);
             this.Name = "Form1";
             this.Text = "Path Finding Application";
             this.ResumeLayout(false);

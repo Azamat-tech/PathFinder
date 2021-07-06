@@ -3,7 +3,7 @@
     public static class BoardConstants
     {
         public const int WIDTH = 1510;
-        public const int HEIGHT = 710;
+        public const int HEIGHT = 790;
 
         public const int MARGIN = 5;
 

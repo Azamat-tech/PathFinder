@@ -618,10 +618,9 @@ namespace Path_Finder.GUI
                                 );
 
             Rectangle gridOutLine = new Rectangle(
-                                BoardConstants.MARGIN,
-                                BoardConstants.TOOLBOXHEIGHT + 3 * BoardConstants.MARGIN,
+                                BoardConstants.MARGIN,ViewConstants.LEFTOVER,
                                 BoardConstants.TOOLBOXWIDTH,
-                                BoardConstants.HEIGHT - (BoardConstants.TOOLBOXHEIGHT + 4 * BoardConstants.MARGIN)
+                                BoardConstants.HEIGHT - (ViewConstants.LEFTOVER + BoardConstants.MARGIN)
                                 );
 
             g.DrawRectangle(pen, boardOutLine);
@@ -636,19 +635,21 @@ namespace Path_Finder.GUI
             {
                 g.DrawLine
                     (
-                        pen, x, (BoardConstants.TOOLBOXHEIGHT + 3 * BoardConstants.MARGIN), 
-                        x, BoardConstants.SQUARE * BoardConstants.ROWSIZE + BoardConstants.MARGIN
+                        pen, x, ViewConstants.LEFTOVER, 
+                        x, BoardConstants.HEIGHT - BoardConstants.MARGIN
                     );
             }
-            for (int y = (BoardConstants.TOOLBOXHEIGHT + 3 * BoardConstants.MARGIN); 
-                     y <= BoardConstants.SQUARE * BoardConstants.ROWSIZE; 
-                     y += BoardConstants.SQUARE)
+            for (int y = ViewConstants.LEFTOVER; y <= BoardConstants.HEIGHT - BoardConstants.SQUARE; y += BoardConstants.SQUARE)
             {
                 g.DrawLine
                     (
                         pen, 5, y, BoardConstants.SQUARE * BoardConstants.COLUMNSIZE + BoardConstants.MARGIN, y
                     );
             }
+/*            g.DrawLine
+                (
+                    pen, 5, 
+                );*/
         }
     }
 }
