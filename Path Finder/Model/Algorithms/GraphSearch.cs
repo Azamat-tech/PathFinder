@@ -2,7 +2,7 @@
 
 using Path_Finder.Grid;
 
-namespace Path_Finder.Algorithms
+namespace Path_Finder.Model.Algorithms
 {
     public enum Algorithm
     {

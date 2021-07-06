@@ -631,7 +631,8 @@ namespace Path_Finder.GUI
 
         private void DrawGrid(Graphics g)
         {
-            for (int x = 5; x <= BoardConstants.SQUARE * BoardConstants.COLUMNSIZE; x += BoardConstants.SQUARE)
+            for (int x = 5; x <= BoardConstants.SQUARE * BoardConstants.COLUMNSIZE;
+                 x += BoardConstants.SQUARE)
             {
                 g.DrawLine
                     (
@@ -639,17 +640,14 @@ namespace Path_Finder.GUI
                         x, BoardConstants.HEIGHT - BoardConstants.MARGIN
                     );
             }
-            for (int y = ViewConstants.LEFTOVER; y <= BoardConstants.HEIGHT - BoardConstants.SQUARE; y += BoardConstants.SQUARE)
+            for (int y = ViewConstants.LEFTOVER; y <= BoardConstants.HEIGHT - BoardConstants.SQUARE; 
+                 y += BoardConstants.SQUARE)
             {
                 g.DrawLine
                     (
                         pen, 5, y, BoardConstants.SQUARE * BoardConstants.COLUMNSIZE + BoardConstants.MARGIN, y
                     );
             }
-/*            g.DrawLine
-                (
-                    pen, 5, 
-                );*/
         }
     }
 }

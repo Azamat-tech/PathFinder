@@ -1,38 +1,37 @@
-﻿using Path_Finder.Constants;
-using Path_Finder.Grid;
+﻿using Path_Finder.Grid;
+using Path_Finder.Constants;
 using Path_Finder.Model.Algorithms.Heuristics;
 
 namespace Path_Finder.Model.Algorithms
 {
     /// <summary>
-    /// The implementation of a Dijkstras algorithm that inherits 
-    /// from the UniformSearch using the priority queue in picking 
-    /// the nodes from the frontier. 
-    /// 
-    /// Search function in Dijkstras algorithm should calculate at every state the 
-    /// function g for each neighbouring states. That is done to choose the closest
-    /// distance from start to Position n i.e g(n). 
+    /// The implementation of a AStar algorithm that inherits from the 
+    /// InformedUniformSearch that uses priority queue in selecting the 
+    /// most optimal position.
     /// </summary>
-    class Dijkstra : UniformSearch
+    class AStarEuclidianDistance : InformedSearch
     {
-
         /// <summary>
-        /// NeighbourTraversal is responsible for calculating the g function for neighbours
-        /// while iterative over them. Manhattan and Euclidean distance will be used by weight
-        /// being 1 from one Position to another.
+        /// AStar algorithm is a part of a informed search that utilizes the function f 
+        /// that returns the optimal path from the start to a goal node. 
+        /// f(n) = h(n) + g(n) where g(n) is the shortest path from start to node n and
+        /// h(n) is Euclidian path from n to the end node.
         /// </summary>
         /// <param name="current"></param>
         /// <param name="grid"></param>
         public sealed override void NeighbourTraversal(Position current, ref Cell[,] grid)
         {
-            int distance;
+            double Gcost;
+            double Hcost;
+            double Fcost;
+
             for(int i = 0; i < 8; i++)
             {
                 Position neighbour = new Position
-                    (
-                        current.x + directionD1[i],
-                        current.y + directionD2[i]
-                    );
+                   (
+                       current.x + directionD1[i],
+                       current.y + directionD2[i]
+                   );
 
                 // Checking the bounds of the grid
                 if (neighbour.y < 0 || neighbour.x < 0 ||
@@ -46,15 +45,17 @@ namespace Path_Finder.Model.Algorithms
                 {
                     continue;
                 }
-
-                distance = Heuristic.ManhattanDistanceHeuristic(current, neighbour);
+                Gcost = Heuristic.EuclideanDistanceHeuristic(current, neighbour);
+                Hcost = Heuristic.EuclideanDistanceHeuristic(neighbour, endPosition);
+                Fcost = Gcost + Hcost;
 
                 grid[neighbour.y, neighbour.x].visited = true;
-                priorityQueue.Insert(neighbour, distance * 10);
+                priorityQueue.Insert(neighbour, Fcost * 10);
                 allVisistedPositions.Add(neighbour);
 
                 // Set the parent Position 
                 grid[neighbour.y, neighbour.x].parent = current;
+
             }
         }
     }

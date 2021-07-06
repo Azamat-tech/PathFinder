@@ -15,8 +15,8 @@ namespace Path_Finder.Model.Algorithms.PriorityQueue
         class Node
         {
             public Position position;
-            public int priority;
-            public Node (Position pos, int prio)
+            public double priority;
+            public Node (Position pos, double prio)
             {
                 position = pos;
                 priority = prio;
@@ -30,11 +30,6 @@ namespace Path_Finder.Model.Algorithms.PriorityQueue
         private static int rightChild(int i) => 2 * i + 2;
 
         public int Count => buffer.Count;
-        private void Clear()
-        {
-            buffer.Clear();
-            heapSize = -1;
-        }
 
         private void swap(int parentN, int childN)
         {
@@ -43,7 +38,7 @@ namespace Path_Finder.Model.Algorithms.PriorityQueue
             buffer[childN] = temp;
         }
 
-        public void Insert(Position position, int priority)
+        public void Insert(Position position, double priority)
         {
             Node node = new Node(position, priority);
             buffer.Add(node);
