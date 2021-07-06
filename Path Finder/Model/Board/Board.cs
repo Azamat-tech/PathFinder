@@ -13,7 +13,7 @@ namespace Path_Finder.Grid
 
         public bool PathFound { get; private set; }
 
-        private bool bfs, dfs, aStar, dijkstra;
+        private bool bfs, dfs, dijkstra, aStarEuclidean, aStarManhattan, smartDFS;
        
         private Position previousPosition = new Position(0, 0);
 
@@ -126,16 +126,6 @@ namespace Path_Finder.Grid
             return false;
         }
 
-        /*
-                public bool IsValidPosition(int posX, int posY)
-                {
-                    if(IsStartPosition(posX, posY) || IsEndPosition(posX, posY) || IsWall(posX,posY))
-                    {
-                        return false;
-                    }
-                    return true;
-                }
-        */
         public void ResetVisitedPropertyInCell()
         {
             for(int i = 0; i < BoardConstants.ROWSIZE; i++)
@@ -252,7 +242,7 @@ namespace Path_Finder.Grid
 
             BombSet = false;
             PathFound = false;
-            AssignAlgoValues(false, false, false, false);
+            AssignAlgoValues(false, false, false, false, false, false);
         }
 
         public bool IsBombSet()
@@ -282,9 +272,10 @@ namespace Path_Finder.Grid
             }
         }
 
-        private void AssignAlgoValues(bool bBFS, bool bDFS, bool bASTAR, bool bDIJKSTRA)
+        private void AssignAlgoValues(bool bBFS, bool bDFS, bool bDIJKSTRA, bool bASTARE, bool bASTARM, bool bSMARTDFS)
         {
-            (bfs, dfs, aStar, dijkstra) = (bBFS, bDFS, bASTAR, bDIJKSTRA);
+            (bfs, dfs, dijkstra, aStarEuclidean, aStarManhattan, smartDFS) = 
+                (bBFS, bDFS, bDIJKSTRA, bASTARE, bASTARM, bSMARTDFS);
         }
 
         public void SetAlgorithm(string algoName)   
@@ -292,33 +283,42 @@ namespace Path_Finder.Grid
             switch (algoName)
             {
                 case "BFS":
-                    AssignAlgoValues(true, false, false, false);
+                    AssignAlgoValues(true, false, false, false, false, false);
                     break;
                 case "DFS":
-                    AssignAlgoValues(false, true, false, false);
-                    break;
-                case "AStar":
-                    AssignAlgoValues(false, false, true, false);
+                    AssignAlgoValues(false, true, false, false, false, false);
                     break;
                 case "Dijkstra":
-                    AssignAlgoValues(false, false, false, true);
+                    AssignAlgoValues(false, false, true, false, false, false);
+                    break;
+                case "AStarEuclidean":
+                    AssignAlgoValues(false, false, false, true, false, false);
+                    break;
+                case "AStarManhattan":
+                    AssignAlgoValues(false, false, false, false, true, false);
+                    break;
+                case "SmartDFS":
+                    AssignAlgoValues(false, false, false, false, false, true);
                     break;
                 default:
-                    AssignAlgoValues(false, false, false, false);
+                    AssignAlgoValues(false, false, false, false, false, false);
                     break;
             }
         }
 
         public bool AnyAlgorithmSet()
         {
-            return bfs || dfs || aStar || dijkstra;
+            return bfs || dfs || aStarEuclidean || aStarManhattan 
+                       || dijkstra || smartDFS;
         }
 
         private Algorithm SelectedAlgorithm()
         {
             if (bfs) return Algorithm.BFS;
             else if (dfs) return Algorithm.DFS;
-            else if (aStar) return Algorithm.AStar;
+            else if (aStarEuclidean) return Algorithm.AStarEuclidian;
+            else if (aStarManhattan) return Algorithm.AStarManhattan;
+            else if (smartDFS) return Algorithm.SmartDFS;
             else return Algorithm.Dijkstra;
         }
 

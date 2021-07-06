@@ -41,13 +41,19 @@ namespace Path_Finder.GUI
 
             #region Adding menu
 
+            ToolStripMenuItem[] aStarMethods =
+{
+                new ToolStripMenuItem("A* Euclidean method", null, AStarEuclidean),
+                new ToolStripMenuItem("A* Manhattan method", null, AStarManhattan)
+            };
+
             ToolStripMenuItem[] algorithms =
             {
                 new ToolStripMenuItem("Breadth-First Search", null, BFS),
                 new ToolStripMenuItem("Depth-First Search", null, DFS),
-                // new ToolStripMenuItem("Depth-First Search Smart", null),
-                new ToolStripMenuItem("A* Search", null, AStar),
                 new ToolStripMenuItem("Dijkstra's Algorithm", null, Dijkstra),
+                new ToolStripMenuItem("Depth-First Search Smart", null, SmartDFS),
+                new ToolStripMenuItem("A* Search", null, aStarMethods)
             };
 
             ToolStripMenuItem[] mazeGenerators =
@@ -159,14 +165,24 @@ namespace Path_Finder.GUI
             board.SetAlgorithm("DFS");
         }
 
-        void AStar(object sender, EventArgs args)
-        {
-            board.SetAlgorithm("AStar");
-        }
-
         void Dijkstra(object sender, EventArgs args)
         {
             board.SetAlgorithm("Dijkstra");
+        }
+
+        void AStarEuclidean(object sender, EventArgs args)
+        {
+            board.SetAlgorithm("AStarEuclidean");
+        }
+
+        void AStarManhattan(object sender, EventArgs args)
+        {
+            board.SetAlgorithm("AStarManhattan");
+        }
+
+        void SmartDFS(object sender, EventArgs args)
+        {
+            board.SetAlgorithm("SmartDFS");
         }
         #endregion
 
@@ -275,10 +291,10 @@ namespace Path_Finder.GUI
 
         private void OnTimerEvent(Object sender, EventArgs args)
         {
-/*            if (isVisualize)
+            if (isVisualize)
             {
                 Invalidate();
-            }*/
+            }
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
@@ -294,12 +310,13 @@ namespace Path_Finder.GUI
                 if(board.IsEmpty(position.x, position.y))
                 {
                     board.SetWall(position.x, position.y);
+                    Invalidate();
                 }
                 else if(board.IsWall(position.x, position.y))
                 {
                     board.RemoveWall(position.x, position.y);
+                    Invalidate();
                 }
-                Invalidate();
                 isMouseDown = true;
             }
         }
