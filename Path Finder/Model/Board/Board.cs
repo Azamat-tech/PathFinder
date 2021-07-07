@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Path_Finder.Constants;
 using Path_Finder.Model.Algorithms;
@@ -62,9 +63,11 @@ namespace Path_Finder.Grid
             return false;
         }
 
+        #region Checks Regarding the Board Cells
+
         public bool IsTaken(int posX, int posY)
         {
-            if (IsTakenByStartAndEnd(posX, posY) && IsWall(posX, posY))
+            if (IsTakenByStartAndEnd(posX, posY) || IsWall(posX, posY))
             {
                 return true;
             }
@@ -125,6 +128,7 @@ namespace Path_Finder.Grid
             }
             return false;
         }
+        #endregion
 
         public void ResetVisitedPropertyInCell()
         {
@@ -139,6 +143,8 @@ namespace Path_Finder.Grid
                 }
             }
         }
+
+        #region Setting the Cell
 
         public void SetCell(int row, int column, CellType givenType, bool isVisited = false)
         {
@@ -204,6 +210,8 @@ namespace Path_Finder.Grid
             }
         }
 
+        #endregion
+
         public void RemoveWall(int posX, int posY, bool justPress = true)
         {
             if(justPress)
@@ -215,6 +223,20 @@ namespace Path_Finder.Grid
                 {
                     SetCell(posY, posX, CellType.EMPTY);
                     previousPosition = new Position(posX, posY);
+                }
+            }
+        }
+
+        private void RemoveAllWalls()
+        {
+            for(int i = 0; i < BoardConstants.ROWSIZE; i++)
+            {
+                for(int j = 0; j < BoardConstants.COLUMNSIZE; j++)
+                {
+                    if(IsWall(j, i))
+                    {
+                        grid[i, j].type = CellType.EMPTY;
+                    }
                 }
             }
         }
@@ -272,6 +294,32 @@ namespace Path_Finder.Grid
             }
         }
 
+        #region Working with Maze Generators
+        public void GenerateRandomMaze()
+        {
+            int rNumber;
+            RemoveAllWalls();
+
+            Random r = new Random();
+
+            for(int i = 0; i < BoardConstants.ROWSIZE; i++)
+            {
+                for (int j = 0; j < BoardConstants.COLUMNSIZE; j++)
+                {
+                    if(!IsTaken(j, i))
+                    {
+                        rNumber = r.Next(0, 100);
+                        if(rNumber <= 35)
+                        {
+                            grid[i, j].type = CellType.WALL;
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region Working with Algorithms 
         private void AssignAlgoValues(bool bBFS, bool bDFS, bool bDIJKSTRA, bool bASTARE, bool bASTARM, bool bSMARTDFS)
         {
             (bfs, dfs, dijkstra, aStarEuclidean, aStarManhattan, smartDFS) = 
@@ -361,7 +409,6 @@ namespace Path_Finder.Grid
             return (finalPath, visitedPositions);
         }
 
-        #region Algorithms
         private (List<Position>, List<Position>) BFS()
         {
             BreadthFirst bfsSearch = new BreadthFirst();

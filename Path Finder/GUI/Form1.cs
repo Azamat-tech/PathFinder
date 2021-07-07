@@ -58,8 +58,8 @@ namespace Path_Finder.GUI
 
             ToolStripMenuItem[] mazeGenerators =
             {
-                new ToolStripMenuItem("Random Maze", null),
-                new ToolStripMenuItem("Recursive Division", null),
+                new ToolStripMenuItem("Random Maze", null, CallRandomMaze),
+                new ToolStripMenuItem("Recursive Division", null, CallRecursiveMaze),
             };
 
             ToolStripMenuItem[] mainItems =
@@ -186,6 +186,18 @@ namespace Path_Finder.GUI
         }
         #endregion
 
+        #region Maze Events
+        private void CallRandomMaze(object sender, EventArgs args) 
+        {
+            board.GenerateRandomMaze();
+            Invalidate();
+        }
+
+        private void CallRecursiveMaze(object sender, EventArgs args)
+        {
+
+        }
+        #endregion
         private Button CreateButton(string name, int posX, int posY, int width, int height)
         {
             Button button = new Button();
