@@ -47,10 +47,10 @@ namespace Path_Finder.Model.Algorithms
                     continue;
                 }
 
-                distance = Heuristic.ManhattanDistanceHeuristic(current, neighbour);
+                distance = Heuristic.ManhattanDistanceHeuristic(startPosition, neighbour);
 
                 grid[neighbour.y, neighbour.x].visited = true;
-                priorityQueue.Insert(neighbour, distance * 10);
+                priorityQueue.Insert(neighbour, distance);
                 allVisistedPositions.Add(neighbour);
 
                 // Set the parent Position 

@@ -35,6 +35,7 @@ namespace Path_Finder.Model.Algorithms
                 {
                     continue;
                 }
+
                 grid[neighbour.y, neighbour.x].visited = true;
                 queue.Enqueue(neighbour);
                 allVisistedPositions.Add(neighbour);
@@ -53,11 +54,13 @@ namespace Path_Finder.Model.Algorithms
             while (queue.Count != 0)
             {
                 Position current = queue.Dequeue();
+
                 if (grid[current.y, current.x].type == CellType.END)
                 {
                     reached = true;
                     break;
                 }
+
                 NeighbourTraversal(current, ref grid);
             }
             if (reached)

@@ -35,6 +35,8 @@ namespace Path_Finder.Model.Algorithms
                 {
                     continue;
                 }
+
+                grid[current.y, current.x].visited = true;
                 stack.Push(neighbour);
                 allVisistedPositions.Add(neighbour);
 
@@ -46,13 +48,14 @@ namespace Path_Finder.Model.Algorithms
         public sealed override (List<Position>, List<Position>) Search(Position start, Position end, Cell[,] grid)
         {
             stack.Push(start);
+
             grid[start.y, start.x].visited = true;
             grid[start.y, start.x].parent = start;
 
             while (stack.Count != 0)
             {
                 Position current = stack.Pop();
-                grid[current.y, current.x].visited = true;
+
                 if (grid[current.y, current.x].type == CellType.END)
                 {
                     reached = true;
