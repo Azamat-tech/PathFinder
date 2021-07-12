@@ -195,7 +195,8 @@ namespace Path_Finder.GUI
 
         private void CallRecursiveMaze(object sender, EventArgs args)
         {
-
+            board.GenerateRecursiveMaze();
+            Invalidate();
         }
         #endregion
         private Button CreateButton(string name, int posX, int posY, int width, int height)

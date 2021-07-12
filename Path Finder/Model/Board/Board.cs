@@ -317,6 +317,90 @@ namespace Path_Finder.Grid
                 }
             }
         }
+
+        public void GenerateRecursiveMaze()
+        {
+            Random n = new Random();
+
+            RemoveAllWalls();
+            RecursiveDivision(0, 0, BoardConstants.COLUMNSIZE, BoardConstants.ROWSIZE, n);
+        }
+
+        // To choose horizontal or vertical direction. 0 is vertical 1 is horizontal
+        private int ChooseDirection(int width, int height)
+        {
+            Random dir = new Random();
+            if (width < height)
+                return 0;
+            else if (width > height)
+                return 1;
+            else
+                return dir.Next(0, 2);
+        }
+
+        //To build the wall in the given index with the empty square "connectionID"
+        private void BuildWall(int direction, int wallId, int connectionID, int w_start, int w_end, int h_start, int h_end)
+        {
+            if (direction == 1)
+            {
+                for (int i = h_start; i < h_end; i++)
+                {
+                    if (connectionID != i && !IsTaken(wallId, i))
+                        grid[i, wallId].type = CellType.WALL;
+                }
+            }
+            else if (direction == 0)
+            {
+                for (int i = w_start; i < w_end; i++)
+                {
+                    if (connectionID != i && !IsTaken(i, wallId))
+                        grid[wallId, i].type = CellType.WALL;
+                }
+            }
+        }
+
+
+        // To build the maze based on recurive division
+        public void RecursiveDivision(int w_start, int h_start, int w_end, int h_end, Random n)
+        {
+            int width = w_end - w_start;
+            int height = h_end - h_start;
+
+            // Recursive Termination
+            if (height < 2 || width < 2)
+                return;
+
+            // Choose randomly horizontal or vertical
+            int direction = ChooseDirection(width, height);
+
+            int wallId;
+            int connectionID;
+            // Randomly select the position to build the wallVZXCBNM>?
+            if (direction == 1)
+            {
+                wallId = n.Next(w_start, w_end);
+                connectionID = n.Next(h_start, h_end);
+            }
+            else
+            {
+                wallId = n.Next(h_start, h_end);
+                connectionID = n.Next(w_start, w_end);
+            }
+            BuildWall(direction, wallId, connectionID, w_start, w_end, h_start, h_end);
+
+            // Recursive on sub-areas 
+            if (direction == 1)
+            {
+                RecursiveDivision(w_start, h_start, wallId - 1, h_end, n);
+                RecursiveDivision(wallId,  h_start, w_end, h_end, n);
+            }
+            else
+            {
+                RecursiveDivision(w_start, h_start, w_end, wallId - 1, n);
+                RecursiveDivision(w_start,  wallId, w_end, h_end, n);
+            }
+        }
+
         #endregion
 
         #region Working with Algorithms 

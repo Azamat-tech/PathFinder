@@ -26,7 +26,7 @@ namespace Path_Finder.Model.Algorithms
         public sealed override void NeighbourTraversal(Position current, ref Cell[,] grid)
         {
             int distance;
-            for(int i = 0; i < 8; i++)
+            for(int i = 0; i < 4; i++)
             {
                 Position neighbour = new Position
                     (
