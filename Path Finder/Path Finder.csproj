@@ -55,7 +55,7 @@
     <Compile Include="Model\Algorithms\GraphSearch.cs" />
     <Compile Include="Model\Algorithms\Heuristics\Heuristic.cs" />
     <Compile Include="Model\Algorithms\InformedSearch.cs" />
-    <Compile Include="Model\Algorithms\PriorityQueue\BinaryHeap.cs" />
+    <Compile Include="Model\Algorithms\PriorityQueue\PriorityQueue.cs" />
     <Compile Include="Model\Algorithms\PriorityQueue\IPriorityQueue.cs" />
     <Compile Include="Model\Algorithms\ProblemSpecificSearch.cs" />
     <Compile Include="Model\Algorithms\UniformSearch.cs" />

@@ -47,7 +47,7 @@ namespace Path_Finder.Model.Algorithms
                     continue;
                 }
 
-                distance = Heuristic.ManhattanDistanceHeuristic(startPosition, neighbour);
+                distance = Heuristic.CalculateManhattanDistanceHeuristic(startPosition, neighbour);
 
                 grid[neighbour.y, neighbour.x].visited = true;
                 priorityQueue.Insert(neighbour, distance);

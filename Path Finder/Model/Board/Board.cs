@@ -457,6 +457,7 @@ namespace Path_Finder.Grid
         public (List<Position>, List<Position>) GetSearchPath()
         {
             Algorithm searchAlgo = SelectedAlgorithm();
+
             List<Position> finalPath = new List<Position>();
             List<Position> visitedPositions = new List<Position>();
 

@@ -1,63 +1,73 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Path_Finder.Grid;
-
-namespace Path_Finder.Model.Algorithms.PriorityQueue
+namespace Path_Finder.Model.Algorithms.PriorityQ
 {
     /// <summary>
-    /// Implementation of priority queue using the Binary Heap data structure
+    /// Implementation of priority queue using the Min Binary Heap data structure
     /// Every item in the priority queue is an element of type Position with 
     /// a corresponding priority of type Int.
     /// </summary>
-    class BinaryHeap : IPriorityQueue<Position>
+    class PriorityQueue<Position> : IPriorityQueue<Position>
     {
-        class Node
+        internal class Node : IComparable<Node>
         {
             public Position position;
             public double priority;
-            public Node (Position pos, double prio)
+            public int CompareTo(Node otherNode)
             {
-                position = pos;
-                priority = prio;
-            }  
+                return priority.CompareTo(otherNode.priority);
+            }
+        }
+                
+        private BinaryMinHeap<Node> minHeap = new BinaryMinHeap<Node>();
+        public int Count => minHeap.GetLength;
+        public void Insert(Position pos, double prio)
+        {
+            minHeap.Add(new Node() { position = pos, priority = prio });
         }
 
-        private List<Node> buffer = new List<Node>();
+        public Position Extract()
+        {
+            return minHeap.Remove().position;
+        }
+    }
+
+    class BinaryMinHeap<T> : IBinaryMinHeap<T> where T : IComparable<T>
+    {
+        private List<T> buffer = new List<T>();
+
         private int heapSize = -1;
         private static int parent(int i) => (i - 1) / 2;
         private static int leftChild(int i) => 2 * i + 1;
         private static int rightChild(int i) => 2 * i + 2;
-
-        public int Count => buffer.Count;
-
+        public int GetLength => buffer.Count;
         private void swap(int parentN, int childN)
         {
-            Node temp = buffer[parentN];
+            T temp = buffer[parentN];
             buffer[parentN] = buffer[childN];
             buffer[childN] = temp;
         }
 
-        public void Insert(Position position, double priority)
+        public void Add(T element)
         {
-            Node node = new Node(position, priority);
-            buffer.Add(node);
+            buffer.Add(element);
             heapSize++;
             HeapMin(heapSize);
         }
 
         public void HeapMin(int heapSize)
         {
-            while (heapSize >= 0 && buffer[parent(heapSize)].priority > buffer[heapSize].priority)
+            while (heapSize >= 0 && buffer[heapSize].CompareTo(buffer[parent(heapSize)]) == -1)
             {
                 swap(heapSize, parent(heapSize));
                 heapSize = parent(heapSize);
             }
         }
 
-        public Position Extract()
+        public T Remove()
         {
-            Position output = buffer[0].position;
+            T output = buffer[0];
             buffer[0] = buffer[heapSize];
             buffer.RemoveAt(heapSize);
             heapSize--;
@@ -70,10 +80,14 @@ namespace Path_Finder.Model.Algorithms.PriorityQueue
             int pos = i;
             int left = leftChild(i);
             int right = rightChild(i);
-            if (left <= heapSize && buffer[pos].priority > buffer[left].priority)
+            if (left <= heapSize && buffer[left].CompareTo(buffer[pos]) == -1)
+            {
                 pos = left;
-            if (right <= heapSize && buffer[pos].priority > buffer[right].priority)
+            }
+            if (right <= heapSize && buffer[right].CompareTo(buffer[pos]) == -1)
+            {
                 pos = right;
+            }
             if (pos != i)
             {
                 swap(pos, i);

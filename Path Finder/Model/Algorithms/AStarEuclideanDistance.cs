@@ -35,7 +35,8 @@ namespace Path_Finder.Model.Algorithms
 
                 // Checking the bounds of the grid
                 if (neighbour.y < 0 || neighbour.x < 0 ||
-                    neighbour.y >= BoardConstants.ROWSIZE || neighbour.x >= BoardConstants.COLUMNSIZE)
+                    neighbour.y >= BoardConstants.ROWSIZE || 
+                    neighbour.x >= BoardConstants.COLUMNSIZE)
                 {
                     continue;
                 }
@@ -45,12 +46,12 @@ namespace Path_Finder.Model.Algorithms
                 {
                     continue;
                 }
-                Gcost = Heuristic.EuclideanDistanceHeuristic(current, neighbour);
-                Hcost = Heuristic.EuclideanDistanceHeuristic(neighbour, endPosition);
+                Gcost = Heuristic.CalculateEuclideanDistanceHeuristic(startPosition, neighbour);
+                Hcost = Heuristic.CalculateEuclideanDistanceHeuristic(neighbour, endPosition);
                 Fcost = Gcost + Hcost;
 
                 grid[neighbour.y, neighbour.x].visited = true;
-                priorityQueue.Insert(neighbour, Fcost * 10);
+                priorityQueue.Insert(neighbour, Fcost);
                 allVisistedPositions.Add(neighbour);
 
                 // Set the parent Position 

@@ -40,10 +40,10 @@ namespace Path_Finder.Model.Algorithms
                     continue;
                 }
 
-                distance = Heuristic.ManhattanDistanceHeuristic(endPosition, current);
+                distance = Heuristic.CalculateManhattanDistanceHeuristic(endPosition, current);
 
                 grid[neighbour.y, neighbour.x].visited = true;
-                priorityQueue.Insert(neighbour, distance * 10);
+                priorityQueue.Insert(neighbour, distance);
                 allVisistedPositions.Add(neighbour);
 
                 // Set the parent Position 

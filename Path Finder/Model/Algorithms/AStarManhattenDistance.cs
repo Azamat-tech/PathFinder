@@ -25,7 +25,7 @@ namespace Path_Finder.Model.Algorithms
             int Hcost;
             int Fcost;
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 4; i++)
             {
                 Position neighbour = new Position
                    (
@@ -35,7 +35,8 @@ namespace Path_Finder.Model.Algorithms
 
                 // Checking the bounds of the grid
                 if (neighbour.y < 0 || neighbour.x < 0 ||
-                    neighbour.y >= BoardConstants.ROWSIZE || neighbour.x >= BoardConstants.COLUMNSIZE)
+                    neighbour.y >= BoardConstants.ROWSIZE || 
+                    neighbour.x >= BoardConstants.COLUMNSIZE)
                 {
                     continue;
                 }
@@ -45,12 +46,12 @@ namespace Path_Finder.Model.Algorithms
                 {
                     continue;
                 }
-                Gcost = Heuristic.ManhattanDistanceHeuristic(current, neighbour);
-                Hcost = Heuristic.ManhattanDistanceHeuristic(neighbour, endPosition);
+                Gcost = Heuristic.CalculateManhattanDistanceHeuristic(startPosition, neighbour);
+                Hcost = Heuristic.CalculateManhattanDistanceHeuristic(neighbour, endPosition);
                 Fcost = Gcost + Hcost;
 
                 grid[neighbour.y, neighbour.x].visited = true;
-                priorityQueue.Insert(neighbour, Fcost * 10);
+                priorityQueue.Insert(neighbour, Fcost);
                 allVisistedPositions.Add(neighbour);
 
                 // Set the parent Position 
