@@ -46,14 +46,8 @@ namespace Path_Finder.Model.Algorithms
                 {
                     continue;
                 }
-                
-                if(IsPositionDiagonal(directionD1[i], directionD2[i]))
-                {
-                    Gcost = distance + 2;
-                }else
-                {
-                    Gcost = distance + 1;
-                }
+
+                Gcost = distance + Heuristic.CalculateManhattanDistanceHeuristic(current, neighbour);
                 Hcost = Heuristic.CalculateManhattanDistanceHeuristic(neighbour, endPosition);
                 Fcost = Gcost + Hcost;
 

@@ -47,14 +47,7 @@ namespace Path_Finder.Model.Algorithms
                     continue;
                 }
 
-                if (IsPositionDiagonal(directionD1[i], directionD2[i]))
-                {
-                    Gcost = distance + 1.4;
-                }
-                else
-                {
-                    Gcost = distance + 1;
-                }
+                Gcost = distance + Heuristic.CalculateEuclideanDistanceHeuristic(current, neighbour);
                 Hcost = Heuristic.CalculateEuclideanDistanceHeuristic(neighbour, endPosition);
                 Fcost = Gcost + Hcost;
 
@@ -64,7 +57,6 @@ namespace Path_Finder.Model.Algorithms
 
                 // Set the parent Position 
                 grid[neighbour.y, neighbour.x].parent = current;
-
             }
         }
     }

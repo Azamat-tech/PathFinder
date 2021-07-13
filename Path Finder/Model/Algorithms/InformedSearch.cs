@@ -15,7 +15,6 @@ namespace Path_Finder.Model.Algorithms
         protected int[] directionD2 = { 0, 0, 1, -1, -1, 1, 1, -1 };
 
         protected PriorityQueue<Position> priorityQueue = new PriorityQueue<Position>();
-        protected bool IsPositionDiagonal(int x, int y) => x != 0 && y != 0;
         public sealed override (List<Position>, List<Position>) Search(Position start, Position end, Cell[,] grid)
         {
             // startPosition = start;
