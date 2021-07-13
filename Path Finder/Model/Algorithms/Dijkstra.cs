@@ -25,13 +25,13 @@ namespace Path_Finder.Model.Algorithms
         /// <param name="grid"></param>
         public sealed override void NeighbourTraversal(Position current, ref Cell[,] grid)
         {
-            int distance;
+            double distance;
             for(int i = 0; i < 4; i++)
             {
                 Position neighbour = new Position
                     (
-                        current.x + directionD1[i],
-                        current.y + directionD2[i]
+                        current.x + directionR[i],
+                        current.y + directionC[i]
                     );
 
                 // Checking the bounds of the grid
@@ -47,7 +47,7 @@ namespace Path_Finder.Model.Algorithms
                     continue;
                 }
 
-                distance = Heuristic.CalculateManhattanDistanceHeuristic(startPosition, neighbour);
+                distance = Heuristic.CalculateEuclideanDistanceHeuristic(startPosition, neighbour);
 
                 grid[neighbour.y, neighbour.x].visited = true;
                 priorityQueue.Insert(neighbour, distance);

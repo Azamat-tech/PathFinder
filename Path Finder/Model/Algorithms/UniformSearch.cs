@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 
 using Path_Finder.Grid;
+using Path_Finder.Model.Algorithms.PriorityQ;
 
 namespace Path_Finder.Model.Algorithms
 {
-    abstract class UniformSearch : ProblemSpecificSearch
+    abstract class UniformSearch : ProblemNonSpecificSearch
     {
         protected Position startPosition;
+        protected PriorityQueue<Position> priorityQueue = new PriorityQueue<Position>();
+
         public sealed override (List<Position>, List<Position>) Search(Position start, Position end, Cell[,] grid)
         {
             startPosition = start;

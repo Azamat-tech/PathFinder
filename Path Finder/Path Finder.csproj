@@ -57,7 +57,7 @@
     <Compile Include="Model\Algorithms\InformedSearch.cs" />
     <Compile Include="Model\Algorithms\PriorityQueue\PriorityQueue.cs" />
     <Compile Include="Model\Algorithms\PriorityQueue\IPriorityQueue.cs" />
-    <Compile Include="Model\Algorithms\ProblemSpecificSearch.cs" />
+    <Compile Include="Model\Algorithms\ProblemNonSpecificSearch.cs" />
     <Compile Include="Model\Algorithms\UniformSearch.cs" />
     <Compile Include="Model\Algorithms\UninformedSearch.cs" />
     <Compile Include="Model\Board\Board.cs" />

@@ -46,7 +46,15 @@ namespace Path_Finder.Model.Algorithms
                 {
                     continue;
                 }
-                Gcost = Heuristic.CalculateEuclideanDistanceHeuristic(startPosition, neighbour);
+
+                if (IsPositionDiagonal(directionD1[i], directionD2[i]))
+                {
+                    Gcost = distance + 1.4;
+                }
+                else
+                {
+                    Gcost = distance + 1;
+                }
                 Hcost = Heuristic.CalculateEuclideanDistanceHeuristic(neighbour, endPosition);
                 Fcost = Gcost + Hcost;
 

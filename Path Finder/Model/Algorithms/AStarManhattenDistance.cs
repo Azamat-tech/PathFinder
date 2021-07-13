@@ -25,7 +25,7 @@ namespace Path_Finder.Model.Algorithms
             int Hcost;
             int Fcost;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++)
             {
                 Position neighbour = new Position
                    (
@@ -46,7 +46,14 @@ namespace Path_Finder.Model.Algorithms
                 {
                     continue;
                 }
-                Gcost = Heuristic.CalculateManhattanDistanceHeuristic(startPosition, neighbour);
+                
+                if(IsPositionDiagonal(directionD1[i], directionD2[i]))
+                {
+                    Gcost = distance + 2;
+                }else
+                {
+                    Gcost = distance + 1;
+                }
                 Hcost = Heuristic.CalculateManhattanDistanceHeuristic(neighbour, endPosition);
                 Fcost = Gcost + Hcost;
 
