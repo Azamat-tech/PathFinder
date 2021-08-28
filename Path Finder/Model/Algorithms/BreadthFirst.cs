@@ -42,7 +42,7 @@ namespace Path_Finder.Model.Algorithms
 
                 // Set the parent position
                 grid[neighbour.y, neighbour.x].parent = current;
-            }
+            } 
         }
 
         public sealed override (List<Position>, List<Position>) Search(Position start, Position end, Cell[,] grid)

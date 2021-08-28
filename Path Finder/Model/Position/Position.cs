@@ -1,4 +1,8 @@
-﻿namespace Path_Finder.Grid
+﻿using System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+
+namespace Path_Finder.Grid
 {
     class Position
     {

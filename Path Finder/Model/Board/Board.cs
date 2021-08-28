@@ -10,9 +10,9 @@ namespace Path_Finder.Grid
     {
         private readonly Cell[,] grid;
 
-        public bool BombSet { get; private set; }
-
+        public bool BombSet { get; set; }
         public bool PathFound { get; private set; }
+        public bool PathToBombFound { get; private set; }
 
         private bool bfs, dfs, dijkstra, aStarEuclidean, aStarManhattan, smartDFS;
        
@@ -130,8 +130,9 @@ namespace Path_Finder.Grid
         }
         #endregion
 
-        public void ResetVisitedPropertyInCell()
+        public void ResetSearching()
         {
+
             for(int i = 0; i < BoardConstants.ROWSIZE; i++)
             {
                 for(int j = 0; j < BoardConstants.COLUMNSIZE; j++)
@@ -142,6 +143,8 @@ namespace Path_Finder.Grid
                     }
                 }
             }
+
+
         }
 
         #region Setting the Cell
@@ -267,15 +270,6 @@ namespace Path_Finder.Grid
             AssignAlgoValues(false, false, false, false, false, false);
         }
 
-        public bool IsBombSet()
-        {
-            if (BombSet)
-            {
-                return true;
-            }
-            return false;
-        }
-
         public void RemoveBomb()
         {
             SetCell(bombPosition.y, bombPosition.x, CellType.EMPTY);
@@ -295,6 +289,13 @@ namespace Path_Finder.Grid
         }
 
         #region Working with Maze Generators
+        public bool IsPathFound()
+        {
+            ResetSearching();
+
+            return BFS(startPosition, endPosition).Item1.Count != 0;
+        }
+
         public void GenerateRandomMaze()
         {
             int rNumber;
@@ -323,7 +324,24 @@ namespace Path_Finder.Grid
             Random n = new Random();
 
             RemoveAllWalls();
-            RecursiveDivision(0, 0, BoardConstants.COLUMNSIZE, BoardConstants.ROWSIZE, n);
+
+            // Add outer walls
+            for (int i = 0; i < BoardConstants.ROWSIZE; i++)
+            {
+                if (i == 0 || i == (BoardConstants.ROWSIZE - 1))
+                {
+                    for (int j = 0; j < BoardConstants.COLUMNSIZE; j++)
+                    {
+                        grid[i, j].type = CellType.WALL;
+                    }
+                } else
+                {
+                    grid[i, 0].type = CellType.WALL;
+                    grid[i, BoardConstants.COLUMNSIZE - 1].type = CellType.WALL;
+                }
+            }
+
+            RecursiveDivision(1, 1, BoardConstants.COLUMNSIZE - 1, BoardConstants.ROWSIZE - 1, n);
         }
 
         // To choose horizontal or vertical direction. 0 is vertical 1 is horizontal
@@ -339,11 +357,11 @@ namespace Path_Finder.Grid
         }
 
         //To build the wall in the given index with the empty square "connectionID"
-        private void BuildWall(int direction, int wallId, int connectionID, int w_start, int w_end, int h_start, int h_end)
+        private void BuildWall(int direction, int wallId, int connectionID, int w_start, int width, int h_start, int height)
         {
             if (direction == 1)
             {
-                for (int i = h_start; i < h_end; i++)
+                for (int i = h_start; i < height; i++)
                 {
                     if (connectionID != i && !IsTaken(wallId, i))
                         grid[i, wallId].type = CellType.WALL;
@@ -351,18 +369,18 @@ namespace Path_Finder.Grid
             }
             else if (direction == 0)
             {
-                for (int i = w_start; i < w_end; i++)
+                for (int i = w_start; i < width; i++)
                 {
                     if (connectionID != i && !IsTaken(i, wallId))
                         grid[wallId, i].type = CellType.WALL;
                 }
             }
         }
-
-
+       
         // To build the maze based on recurive division
         public void RecursiveDivision(int w_start, int h_start, int w_end, int h_end, Random n)
         {
+
             int width = w_end - w_start;
             int height = h_end - h_start;
 
@@ -375,7 +393,7 @@ namespace Path_Finder.Grid
 
             int wallId;
             int connectionID;
-            // Randomly select the position to build the wallVZXCBNM>?
+            // Randomly select the position to build the wall
             if (direction == 1)
             {
                 wallId = n.Next(w_start, w_end);
@@ -392,12 +410,12 @@ namespace Path_Finder.Grid
             if (direction == 1)
             {
                 RecursiveDivision(w_start, h_start, wallId - 1, h_end, n);
-                RecursiveDivision(wallId,  h_start, w_end, h_end, n);
+                RecursiveDivision(wallId, h_start, w_end, h_end, n);
             }
             else
             {
                 RecursiveDivision(w_start, h_start, w_end, wallId - 1, n);
-                RecursiveDivision(w_start,  wallId, w_end, h_end, n);
+                RecursiveDivision(w_start, wallId, w_end, h_end, n);
             }
         }
 
@@ -454,7 +472,7 @@ namespace Path_Finder.Grid
             else return Algorithm.Dijkstra;
         }
 
-        public (List<Position>, List<Position>) GetSearchPath()
+        public (List<Position>, List<Position>) GetSearchPath(Position a, Position b)
         {
             Algorithm searchAlgo = SelectedAlgorithm();
 
@@ -464,70 +482,86 @@ namespace Path_Finder.Grid
             switch (searchAlgo)
             {
                 case Algorithm.BFS:
-                    (finalPath, visitedPositions) = BFS();
+                    (finalPath, visitedPositions) = BFS(a, b);
                     break;
                 case Algorithm.DFS:
-                    (finalPath, visitedPositions) = DFS();
+                    (finalPath, visitedPositions) = DFS(a, b);
                     break;
                 case Algorithm.Dijkstra:
-                    (finalPath, visitedPositions) = Dijkstra();
+                    (finalPath, visitedPositions) = Dijkstra(a, b);
                     break;
                 case Algorithm.AStarEuclidian:
-                    (finalPath, visitedPositions) = AStarEuclideanSearch();
+                    (finalPath, visitedPositions) = AStarEuclideanSearch(a, b);
                     break;
                 case Algorithm.AStarManhattan:
-                    (finalPath, visitedPositions) = AStarManhattanSearch();
+                    (finalPath, visitedPositions) = AStarManhattanSearch(a, b);
                     break;
                 case Algorithm.SmartDFS:
-                    (finalPath, visitedPositions) = SmartDFS();
+                    (finalPath, visitedPositions) = SmartDFS(a, b);
                     break;
                 default:
                     break;
             }
+
             if(finalPath.Count != 0)
             {
-                PathFound = true;
-            }else
+                if (b == bombPosition)
+                {
+                    PathToBombFound = true;
+                } else
+                {
+                    PathFound = true;
+                }
+            }
+            else
             {
-                PathFound = false;
+                if (b == bombPosition)
+                {
+                    PathToBombFound = false;
+                }
+                else
+                {
+                    PathFound = false;
+                }
             }
             return (finalPath, visitedPositions);
         }
 
-        private (List<Position>, List<Position>) BFS()
+
+        private (List<Position>, List<Position>) BFS(Position a, Position b)
         {
             BreadthFirst bfsSearch = new BreadthFirst();
-            return bfsSearch.Search(startPosition, endPosition, grid);
+            return bfsSearch.Search(a, b, grid);
         }
 
-        private (List<Position>, List<Position>) DFS()
+        private (List<Position>, List<Position>) DFS(Position a, Position b)
         {
             DepthFirst dfsSearch = new DepthFirst();
-            return dfsSearch.Search(startPosition, endPosition, grid);
+            return dfsSearch.Search(a, b, grid);
         }
 
-        private (List<Position>, List<Position>) Dijkstra()
+        private (List<Position>, List<Position>) Dijkstra(Position a, Position b)
         {
             Dijkstra dijkstraAlgorithm = new Dijkstra();
-            return dijkstraAlgorithm.Search(startPosition, endPosition, grid);
+            return dijkstraAlgorithm.Search(a, b, grid);
         }
 
-        private (List<Position>, List<Position>) AStarEuclideanSearch()
+        private (List<Position>, List<Position>) AStarEuclideanSearch(Position a, Position b)
         {
             AStarEuclideanDistance aStarEuclidean = new AStarEuclideanDistance();
-            return aStarEuclidean.Search(startPosition, endPosition, grid);
+            return aStarEuclidean.Search(a, b, grid);
         }
 
-        private (List<Position>, List<Position>) AStarManhattanSearch()
+        private (List<Position>, List<Position>) AStarManhattanSearch(Position a, Position b)
         {
             AStarManhattenDistance aStarManhattan = new AStarManhattenDistance();
-            return aStarManhattan.Search(startPosition, endPosition, grid);
+            return aStarManhattan.Search(a, b, grid);
         }
 
-        private (List<Position>, List<Position>) SmartDFS()
+        private (List<Position>, List<Position>) SmartDFS(Position a, Position b)
         {
             DepthFirstSmart smartDFS = new DepthFirstSmart();
-            return smartDFS.Search(startPosition, endPosition, grid);
+            return smartDFS.Search(a, b, grid);
         }
         #endregion
     }

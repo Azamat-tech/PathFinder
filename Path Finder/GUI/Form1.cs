@@ -15,6 +15,9 @@ namespace Path_Finder.GUI
         private List<Position> path = new List<Position>();
         private List<Position> allVisitedPositions = new List<Position>();
 
+        private List<Position> pathToBomb = new List<Position>();
+        private List<Position> allPathToBombVisited = new List<Position>();
+
         private readonly Timer timer;
 
         private readonly Pen pen = new Pen(Brushes.Gray, 2);
@@ -190,15 +193,30 @@ namespace Path_Finder.GUI
         private void CallRandomMaze(object sender, EventArgs args) 
         {
             board.GenerateRandomMaze();
-            Invalidate();
+
+            if(board.IsPathFound())
+            {
+                Invalidate();
+            } else
+            {
+                CallRandomMaze(sender, args);
+            }
         }
 
         private void CallRecursiveMaze(object sender, EventArgs args)
         {
             board.GenerateRecursiveMaze();
-            Invalidate();
+
+            if(board.IsPathFound())
+            {
+                Invalidate();
+            }else
+            {
+                CallRecursiveMaze(sender, args);
+            }
         }
         #endregion
+
         private Button CreateButton(string name, int posX, int posY, int width, int height)
         {
             Button button = new Button();
@@ -253,7 +271,8 @@ namespace Path_Finder.GUI
 
         private void AddBomb(Object sender, EventArgs args)
         {
-            if(!board.IsTaken(board.GetBombPosition().x, board.GetBombPosition().y))
+            Position bombPosition = board.GetBombPosition();
+            if(!board.IsTaken(bombPosition.x, bombPosition.y))
             {
                 board.AddBomb();
                 addRemoveButton.Name = ViewConstants.removeBombName;
@@ -266,7 +285,7 @@ namespace Path_Finder.GUI
 
         private void RemoveBomb(Object sender, EventArgs args)
         {
-            if(board.IsBombSet())
+            if(board.BombSet)
             {
                 board.RemoveBomb();
                 addRemoveButton.Name = ViewConstants.addBombName;
@@ -286,19 +305,47 @@ namespace Path_Finder.GUI
             else
             {
                 isVisualize = true;
+
                 // Before calling any search algorithms, reset the visited 
                 // property in each Cell of the grid
-                board.ResetVisitedPropertyInCell();
+                board.ResetSearching();
 
-                (path, allVisitedPositions) = board.GetSearchPath();
+                if(!board.BombSet)
+                {
+                    (path, allVisitedPositions) = board.GetSearchPath(board.GetStartingPosition(),
+                                                  board.GetEndPosition());
+                } else
+                {
+                    (pathToBomb, allPathToBombVisited) = board.GetSearchPath(
+                        board.GetStartingPosition(), board.GetBombPosition());
 
-                if(!board.PathFound)
-                {
-                    MessageBox.Show("The path was not found");
-                }else
-                {
-                    Invalidate();
+                    board.ResetSearching();
+
+                    (path, allVisitedPositions) = board.GetSearchPath(board.GetBombPosition(),
+                                                  board.GetEndPosition());
+
+                    pathToBomb.AddRange(path);
                 }
+
+                if (!board.BombSet)
+                {
+                    if (!board.PathFound)
+                    {
+                        MessageBox.Show("The path is not found");
+                    }
+                }
+                else
+                {
+                    if (!board.PathToBombFound)
+                    {
+                        MessageBox.Show("The path to the bomb is not found");
+                    }
+                    else if (!board.PathFound)
+                    {
+                        MessageBox.Show("The path from the bomb is not found");
+                    }
+                }
+                Invalidate();
             }
         }
 
@@ -344,28 +391,33 @@ namespace Path_Finder.GUI
             
             if (isMouseDown && board.InsideTheBoard(e.X, e.Y))
             {
-                if (board.IsEmpty(position.x, position.y) && !isStartMoving && !isEndMoving && !isBombMoving)
+                if (board.IsEmpty(position.x, position.y) && !isStartMoving && !isEndMoving && 
+                    !isBombMoving)
                 {
                     board.SetWall(position.x, position.y, false);
                     isWallMoving = true;
                 }
-                else if (board.IsWall(position.x, position.y) && !isStartMoving && !isEndMoving && !isBombMoving)
+                else if (board.IsWall(position.x, position.y) && !isStartMoving && !isEndMoving && 
+                    !isBombMoving)
                 {
                     board.RemoveWall(position.x, position.y, false);
                 }
-                else if ((board.IsStartPosition(position.x, position.y) || isStartMoving) && !isWallMoving && !isBombMoving)
+                else if ((board.IsStartPosition(position.x, position.y) || isStartMoving) && 
+                    !isWallMoving && !isBombMoving)
                 {
                     board.SetStartPosition(position.x, position.y);
                     isStartMoving = true;
                 }
-                else if ((board.IsEndPosition(position.x, position.y) || isEndMoving) && !isWallMoving && !isBombMoving)
+                else if ((board.IsEndPosition(position.x, position.y) || isEndMoving) && 
+                    !isWallMoving && !isBombMoving)
                 {
                     board.SetEndPosition(position.x, position.y);
                     isEndMoving = true;
                 }
-                else if(board.IsBombSet())
+                else if(board.BombSet)
                 {
-                    if((board.IsBombPosition(position.x, position.y) || isBombMoving) && !isWallMoving)
+                    if((board.IsBombPosition(position.x, position.y) || isBombMoving) && 
+                        !isWallMoving)
                     {
                         board.SetBombPosition(position.x, position.y);
                         isBombMoving = true;
@@ -401,7 +453,8 @@ namespace Path_Finder.GUI
                     new Position
                     (
                         7 * ViewConstants.BUTTONWIDTH - 2 * BoardConstants.SQUARE, 
-                        BoardConstants.MARGIN + BoardConstants.TOOLBOXHEIGHT + BoardConstants.MARGIN
+                        BoardConstants.MARGIN + BoardConstants.TOOLBOXHEIGHT + 
+                        BoardConstants.MARGIN
                     )
                 );
 
@@ -417,7 +470,8 @@ namespace Path_Finder.GUI
 
             DrawStartPosition
                 (
-                    g, board.GetStartingPosition().x * BoardConstants.SQUARE + BoardConstants.MARGIN,
+                    g, board.GetStartingPosition().x * BoardConstants.SQUARE + 
+                    BoardConstants.MARGIN,
                     board.GetStartingPosition().y * BoardConstants.SQUARE + ViewConstants.LEFTOVER
                 );
 
@@ -427,25 +481,28 @@ namespace Path_Finder.GUI
                     board.GetEndPosition().y * BoardConstants.SQUARE + ViewConstants.LEFTOVER
                 );
 
-            if(board.IsBombSet())
+            if(board.BombSet)
             {
                 DrawEllipseRectange
                     (
-                        g, board.GetBombPosition().x * BoardConstants.SQUARE + BoardConstants.MARGIN,
+                        g, board.GetBombPosition().x * BoardConstants.SQUARE + 
+                        BoardConstants.MARGIN,
                         board.GetBombPosition().y * BoardConstants.SQUARE + ViewConstants.LEFTOVER
                     );
             }
             DrawWalls(g);
         }
-        private void DrawAllVisitedPositions(PaintEventArgs e, Graphics g)
+        
+        private void DrawPathHelper(Graphics g, List<Position> passedList, Brush color)
         {
             Rectangle r;
             int x, y;
             int valueX, valueY;
-            for(int i = 0; i < allVisitedPositions.Count; i++)
+
+            for (int i = 0; i < passedList.Count; i++)
             {
-                x = allVisitedPositions[i].x;
-                y = allVisitedPositions[i].y;
+                x = passedList[i].x;
+                y = passedList[i].y;
                 valueX = x * BoardConstants.SQUARE + BoardConstants.MARGIN;
                 valueY = y * BoardConstants.SQUARE + ViewConstants.LEFTOVER;
 
@@ -459,28 +516,27 @@ namespace Path_Finder.GUI
                         valueX, valueY,
                         BoardConstants.SQUARE, BoardConstants.SQUARE
                     );
-                g.FillRectangle(Brushes.PowderBlue, r);
-            }
 
-            for(int i = 0; i < path.Count; i++)
+                g.FillRectangle(color, r);
+            }
+        }
+
+        private void DrawAllVisitedPositions(PaintEventArgs e, Graphics g)
+        {
+
+            if(board.BombSet)
             {
-                x = path[i].x;
-                y = path[i].y;
-                valueX = x * BoardConstants.SQUARE + BoardConstants.MARGIN;
-                valueY = y * BoardConstants.SQUARE + ViewConstants.LEFTOVER;
+                DrawPathHelper(g, allPathToBombVisited, Brushes.PowderBlue);
 
-                if (!board.InsideTheBoard(valueX, valueY) || board.IsTaken(x, y))
-                {
-                    continue;
-                }
-                r = new Rectangle
-                    (
-                        valueX, valueY,
-                        BoardConstants.SQUARE, BoardConstants.SQUARE
-                    );
-                g.FillRectangle(Brushes.Tomato, r);
+                DrawPathHelper(g, allVisitedPositions, Brushes.MediumOrchid);
+
+                DrawPathHelper(g, pathToBomb, Brushes.Yellow);
+            } else
+            {
+                DrawPathHelper(g, allVisitedPositions, Brushes.PowderBlue);
+
+                DrawPathHelper(g, path, Brushes.Tomato);
             }
-
         }
 
         private void DrawToolBoxBorders(Graphics g, Position from, Position to)
@@ -520,19 +576,20 @@ namespace Path_Finder.GUI
                 );
             DrawEndPosition
                 (
-                    g, BoardConstants.MARGIN + 2 * ViewConstants.LABELWIDTH + BoardConstants.SQUARE, 
+                    g, BoardConstants.MARGIN + 2 * ViewConstants.LABELWIDTH + 
+                    BoardConstants.SQUARE, 
                     2 * BoardConstants.SQUARE + 4
                 );
 
             DrawEllipseRectange
                 (
-                    g, BoardConstants.MARGIN + 3 * ViewConstants.LABELWIDTH + 2 * BoardConstants.SQUARE, 
-                    2 * BoardConstants.SQUARE + 4
+                    g, BoardConstants.MARGIN + 3 * ViewConstants.LABELWIDTH + 2 * 
+                    BoardConstants.SQUARE, 2 * BoardConstants.SQUARE + 4
                 );
             DrawWallNode
                 (
-                    g, 3 * BoardConstants.MARGIN + 4 * ViewConstants.LABELWIDTH + 2 * BoardConstants.SQUARE,
-                    2 * BoardConstants.SQUARE + 4
+                    g, 3 * BoardConstants.MARGIN + 4 * ViewConstants.LABELWIDTH + 2 * 
+                    BoardConstants.SQUARE, 2 * BoardConstants.SQUARE + 4
                 );
 
             DrawVisitedNodes
@@ -542,26 +599,33 @@ namespace Path_Finder.GUI
                 );
             DrawVisitedNodes
                 (
-                    g, BoardConstants.MARGIN + 5 * ViewConstants.LABELWIDTH + 5 * BoardConstants.SQUARE, 
-                    2 * BoardConstants.SQUARE + 4, isFirstDestination:false
+                    g, BoardConstants.MARGIN + 5 * ViewConstants.LABELWIDTH + 5 * 
+                    BoardConstants.SQUARE, 2 * BoardConstants.SQUARE + 4, isFirstDestination:false
                 );
 
             DrawShortestPathNode
                 (
-                    g, 2 * BoardConstants.MARGIN + 6 * ViewConstants.LABELWIDTH + 8 * BoardConstants.SQUARE, 
-                    2 * BoardConstants.SQUARE + 4
+                    g, 2 * BoardConstants.MARGIN + 6 * ViewConstants.LABELWIDTH + 8 * 
+                    BoardConstants.SQUARE, 2 * BoardConstants.SQUARE + 4
                 );
         }
 
         private void DrawShortestPathNode(Graphics g, int posX, int posY)
         {
-            Rectangle path = new Rectangle(posX, posY, BoardConstants.SQUARE, BoardConstants.SQUARE);
+            Rectangle path = new Rectangle
+                (
+                    posX, posY, BoardConstants.SQUARE, BoardConstants.SQUARE
+                );
             g.FillRectangle(Brushes.Yellow, path);
         }
 
-        private void DrawVisitedNodes(Graphics g, int posX, int PosY, bool isFirstDestination = true)
+        private void DrawVisitedNodes(Graphics g, int posX, int PosY, 
+            bool isFirstDestination = true)
         {
-            Rectangle visited = new Rectangle(posX, PosY, BoardConstants.SQUARE, BoardConstants.SQUARE);
+            Rectangle visited = new Rectangle
+                (
+                    posX, PosY, BoardConstants.SQUARE, BoardConstants.SQUARE
+                );
             if (isFirstDestination)
             {
                 g.FillRectangle(Brushes.Aqua, visited);
@@ -574,7 +638,10 @@ namespace Path_Finder.GUI
 
         private void DrawWallNode(Graphics g, int posX, int posY)
         {
-            Rectangle unvisitedNode = new Rectangle(posX, posY, BoardConstants.SQUARE, BoardConstants.SQUARE);
+            Rectangle unvisitedNode = new Rectangle
+                (
+                    posX, posY, BoardConstants.SQUARE, BoardConstants.SQUARE
+                );
 
             g.FillRectangle(Brushes.Black, unvisitedNode);
         }
@@ -642,15 +709,17 @@ namespace Path_Finder.GUI
                                 );
 
             Rectangle toolBoxOutLine = new Rectangle(
-                                BoardConstants.MARGIN, BoardConstants.MARGIN + BoardConstants.SQUARE, 
-                                BoardConstants.TOOLBOXWIDTH,
-                                BoardConstants.TOOLBOXHEIGHT - BoardConstants.SQUARE + BoardConstants.MARGIN
+                                BoardConstants.MARGIN, BoardConstants.MARGIN + 
+                                BoardConstants.SQUARE, BoardConstants.TOOLBOXWIDTH,
+                                BoardConstants.TOOLBOXHEIGHT - BoardConstants.SQUARE + 
+                                BoardConstants.MARGIN
                                 );
 
             Rectangle gridOutLine = new Rectangle(
                                 BoardConstants.MARGIN,ViewConstants.LEFTOVER,
                                 BoardConstants.TOOLBOXWIDTH,
-                                BoardConstants.HEIGHT - (ViewConstants.LEFTOVER + BoardConstants.MARGIN)
+                                BoardConstants.HEIGHT - (ViewConstants.LEFTOVER + 
+                                BoardConstants.MARGIN)
                                 );
 
             g.DrawRectangle(pen, boardOutLine);
@@ -675,7 +744,8 @@ namespace Path_Finder.GUI
             {
                 g.DrawLine
                     (
-                        pen, 5, y, BoardConstants.SQUARE * BoardConstants.COLUMNSIZE + BoardConstants.MARGIN, y
+                        pen, 5, y, BoardConstants.SQUARE * BoardConstants.COLUMNSIZE + 
+                        BoardConstants.MARGIN, y
                     );
             }
         }
