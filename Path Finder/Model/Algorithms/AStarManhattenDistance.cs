@@ -31,7 +31,7 @@ namespace Path_Finder.Model.Algorithms
 
                 // Checking the bounds of the grid
                 if (neighbour.y < 0 || neighbour.x < 0 ||
-                    neighbour.y >= BoardConstants.ROWSIZE || 
+                    neighbour.y >= BoardConstants.ROWSIZE ||
                     neighbour.x >= BoardConstants.COLUMNSIZE)
                 {
                     continue;
@@ -46,7 +46,8 @@ namespace Path_Finder.Model.Algorithms
                 if (i < 4)
                 {
                     neighbour.Gcost = current.Gcost + 1;
-                }else
+                }
+                else
                 {
                     neighbour.Gcost = current.Gcost + 2;
                 }

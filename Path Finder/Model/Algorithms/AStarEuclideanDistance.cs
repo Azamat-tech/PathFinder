@@ -21,7 +21,7 @@ namespace Path_Finder.Model.Algorithms
         /// <param name="grid"></param>
         public sealed override void NeighbourTraversal(Position current, ref Cell[,] grid)
         {
-            for(int i = 0; i < 8; i++)
+            for (int i = 0; i < 8; i++)
             {
                 Position neighbour = new Position
                    (
@@ -31,7 +31,7 @@ namespace Path_Finder.Model.Algorithms
 
                 // Checking the bounds of the grid
                 if (neighbour.y < 0 || neighbour.x < 0 ||
-                    neighbour.y >= BoardConstants.ROWSIZE || 
+                    neighbour.y >= BoardConstants.ROWSIZE ||
                     neighbour.x >= BoardConstants.COLUMNSIZE)
                 {
                     continue;

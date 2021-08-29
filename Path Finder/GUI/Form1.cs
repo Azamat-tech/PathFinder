@@ -193,26 +193,56 @@ namespace Path_Finder.GUI
         private void CallRandomMaze(object sender, EventArgs args) 
         {
             board.GenerateRandomMaze();
-
-            if(board.IsPathFound())
+            if (!board.BombSet)
             {
-                Invalidate();
+                if (board.IsPathFound(board.GetStartingPosition(), board.GetEndPosition()))
+                {
+                    Invalidate();
+                }
+                else
+                {
+                    CallRandomMaze(sender, args);
+                }
             } else
             {
-                CallRandomMaze(sender, args);
+                if (board.IsPathFound(board.GetStartingPosition(), board.GetBombPosition()) && 
+                    board.IsPathFound(board.GetBombPosition(), board.GetEndPosition()))
+                {
+                    Invalidate();
+                } else
+                {
+                    CallRandomMaze(sender, args);
+                }
             }
+
         }
 
         private void CallRecursiveMaze(object sender, EventArgs args)
         {
             board.GenerateRecursiveMaze();
 
-            if(board.IsPathFound())
+            if (!board.BombSet)
             {
-                Invalidate();
-            }else
+                if (board.IsPathFound(board.GetStartingPosition(), board.GetEndPosition()))
+                {
+                    Invalidate();
+                }
+                else
+                {
+                    CallRandomMaze(sender, args);
+                }
+            }
+            else
             {
-                CallRecursiveMaze(sender, args);
+                if (board.IsPathFound(board.GetStartingPosition(), board.GetBombPosition()) &&
+                    board.IsPathFound(board.GetBombPosition(), board.GetEndPosition()))
+                {
+                    Invalidate();
+                }
+                else
+                {
+                    CallRecursiveMaze(sender, args);
+                }
             }
         }
         #endregion
