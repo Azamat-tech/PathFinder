@@ -2,26 +2,24 @@
 
 using Path_Finder.Grid;
 using Path_Finder.Model.Algorithms.PriorityQ;
+using Path_Finder.Model.Algorithms.Heuristics;
 
 namespace Path_Finder.Model.Algorithms
 {
     abstract class InformedSearch : GraphSearch
     {
-        // protected Position startPosition;
-        protected int distance;
         protected Position endPosition;
-
-        protected int[] directionD1 = { -1, 1, 0, 0, 1, -1, 1, -1 };
-        protected int[] directionD2 = { 0, 0, 1, -1, -1, 1, 1, -1 };
 
         protected PriorityQueue<Position> priorityQueue = new PriorityQueue<Position>();
         public sealed override (List<Position>, List<Position>) Search(Position start, Position end, Cell[,] grid)
         {
-            // startPosition = start;
-            distance = 0;
             endPosition = end;
 
-            priorityQueue.Insert(start, 0);
+            start.Gcost = 0;
+            start.Hcost = Heuristic.CalculateManhattanDistanceHeuristic(start, end);
+
+            priorityQueue.Insert(start, start.Hcost);
+
             grid[start.y, start.x].visited = true;
             grid[start.y, start.x].parent = start;
 
@@ -34,7 +32,6 @@ namespace Path_Finder.Model.Algorithms
                     break;
                 }
                 NeighbourTraversal(current, ref grid);
-                distance += 1;
             }
             if (reached)
             {

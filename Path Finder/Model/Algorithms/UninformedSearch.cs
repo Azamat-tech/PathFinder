@@ -1,7 +1,12 @@
-﻿namespace Path_Finder.Model.Algorithms
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Path_Finder.Model.Algorithms
 {
-    abstract class UninformedSearch : ProblemNonSpecificSearch
+    abstract class UninformedSearch : GraphSearch
     {
-        
     }
 }

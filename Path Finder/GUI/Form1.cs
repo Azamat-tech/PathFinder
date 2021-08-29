@@ -628,7 +628,7 @@ namespace Path_Finder.GUI
                 );
             if (isFirstDestination)
             {
-                g.FillRectangle(Brushes.Aqua, visited);
+                g.FillRectangle(Brushes.PowderBlue, visited);
             }
             else
             {

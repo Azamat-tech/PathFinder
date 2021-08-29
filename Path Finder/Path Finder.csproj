@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Algorithms\UninformedSearch.cs" />
     <Compile Include="Model\Algorithms\AStarEuclideanDistance.cs" />
     <Compile Include="Model\Algorithms\AStarManhattenDistance.cs" />
     <Compile Include="Model\Algorithms\BreadthFirst.cs" />
@@ -57,9 +58,7 @@
     <Compile Include="Model\Algorithms\InformedSearch.cs" />
     <Compile Include="Model\Algorithms\PriorityQueue\PriorityQueue.cs" />
     <Compile Include="Model\Algorithms\PriorityQueue\IPriorityQueue.cs" />
-    <Compile Include="Model\Algorithms\ProblemNonSpecificSearch.cs" />
     <Compile Include="Model\Algorithms\UniformSearch.cs" />
-    <Compile Include="Model\Algorithms\UninformedSearch.cs" />
     <Compile Include="Model\Board\Board.cs" />
     <Compile Include="Model\Cell\Cell.cs" />
     <Compile Include="Constants\BoardConstants.cs" />

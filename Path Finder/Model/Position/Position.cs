@@ -7,6 +7,10 @@ namespace Path_Finder.Grid
     class Position
     {
         public int x, y;
+        public double Gcost { get; set; }
+        public double Hcost { get; set; }
+        public double Fcost => Gcost + Hcost;
+
         public Position(int posX, int posY)
         {
             x = posX;

@@ -15,6 +15,8 @@ namespace Path_Finder.Model.Algorithms
 
         protected bool reached;
 
+        protected int[] directionD1 = { -1, 1, 0, 0, 1, -1, 1, -1 };
+        protected int[] directionD2 = { 0, 0, 1, -1, -1, 1, 1, -1 };
 
         /// <summary>
         /// Search function returns the List of the positions from the start to 

@@ -5,7 +5,7 @@ using Path_Finder.Model.Algorithms.PriorityQ;
 
 namespace Path_Finder.Model.Algorithms
 {
-    abstract class UniformSearch : ProblemNonSpecificSearch
+    abstract class UniformSearch : UninformedSearch
     {
         protected Position startPosition;
         protected PriorityQueue<Position> priorityQueue = new PriorityQueue<Position>();

@@ -132,7 +132,6 @@ namespace Path_Finder.Grid
 
         public void ResetSearching()
         {
-
             for(int i = 0; i < BoardConstants.ROWSIZE; i++)
             {
                 for(int j = 0; j < BoardConstants.COLUMNSIZE; j++)
@@ -143,8 +142,6 @@ namespace Path_Finder.Grid
                     }
                 }
             }
-
-
         }
 
         #region Setting the Cell

@@ -30,8 +30,8 @@ namespace Path_Finder.Model.Algorithms
             {
                 Position neighbour = new Position
                     (
-                        current.x + directionR[i],
-                        current.y + directionC[i]
+                        current.x + directionD1[i],
+                        current.y + directionD2[i]
                     );
 
                 // Checking the bounds of the grid

@@ -21,10 +21,6 @@ namespace Path_Finder.Model.Algorithms
         /// <param name="grid"></param>
         public sealed override void NeighbourTraversal(Position current, ref Cell[,] grid)
         {
-            double Gcost;
-            double Hcost;
-            double Fcost;
-
             for(int i = 0; i < 8; i++)
             {
                 Position neighbour = new Position
@@ -47,12 +43,19 @@ namespace Path_Finder.Model.Algorithms
                     continue;
                 }
 
-                Gcost = distance + Heuristic.CalculateEuclideanDistanceHeuristic(current, neighbour);
-                Hcost = Heuristic.CalculateEuclideanDistanceHeuristic(neighbour, endPosition);
-                Fcost = Gcost + Hcost;
+                if (i < 4)
+                {
+                    neighbour.Gcost = current.Gcost + 1;
+                }
+                else
+                {
+                    neighbour.Gcost = current.Gcost + 1.4;
+                }
+
+                neighbour.Hcost = Heuristic.CalculateEuclideanDistanceHeuristic(neighbour, endPosition);
 
                 grid[neighbour.y, neighbour.x].visited = true;
-                priorityQueue.Insert(neighbour, Fcost);
+                priorityQueue.Insert(neighbour, neighbour.Fcost);
                 allVisistedPositions.Add(neighbour);
 
                 // Set the parent Position 
