@@ -2,7 +2,7 @@
 {
     public enum CellType
     {
-        EMPTY, WALL, START, END, BOMB
+        EMPTY, WALL, WEIGHT, START, END, BOMB
     }
 
     class Cell

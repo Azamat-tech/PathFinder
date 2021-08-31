@@ -111,6 +111,15 @@ namespace Path_Finder.Grid
             return false;
         }
 
+        public bool IsWeightNode(int posX, int posY)
+        {
+            if (grid[posY, posX].type == CellType.WEIGHT)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public bool IsWall(int posX, int posY)
         {
             if (grid[posY, posX].type == CellType.WALL)
@@ -210,9 +219,23 @@ namespace Path_Finder.Grid
             }
         }
 
+        public void SetWeightNode(int posX, int posY, bool justPress = true)
+        {
+            if (justPress)
+            {
+                SetCell(posY, posX, CellType.WEIGHT);
+            }
+            else
+            {
+                if (previousPosition.x != posX || previousPosition.y != posY)
+                {
+                    SetCell(posY, posX, CellType.WEIGHT);
+                    previousPosition = new Position(posX, posY);
+                }
+            }
+        }
         #endregion
-
-        public void RemoveWall(int posX, int posY, bool justPress = true)
+        public void SetCellToEmpty(int posX, int posY, bool justPress = true)
         {
             if (justPress)
             {
@@ -227,7 +250,7 @@ namespace Path_Finder.Grid
                 }
             }
         }
-
+        
         private void RemoveAllWalls()
         {
             for (int i = 0; i < BoardConstants.ROWSIZE; i++)
@@ -236,7 +259,7 @@ namespace Path_Finder.Grid
                 {
                     if (IsWall(j, i))
                     {
-                        grid[i, j].type = CellType.EMPTY;
+                        SetCellToEmpty(j, i);
                     }
                 }
             }
@@ -268,6 +291,8 @@ namespace Path_Finder.Grid
             AssignAlgoValues(false, false, false, false, false, false);
         }
 
+        #region Bomb Functions
+
         public void RemoveBomb()
         {
             SetCell(bombPosition.y, bombPosition.x, CellType.EMPTY);
@@ -285,6 +310,7 @@ namespace Path_Finder.Grid
                 BombSet = true;
             }
         }
+        #endregion
 
         #region Working with Maze Generators
         public bool IsPathFound(Position a, Position b)
@@ -449,7 +475,7 @@ namespace Path_Finder.Grid
                 case "SmartDFS":
                     AssignAlgoValues(false, false, false, false, false, true);
                     break;
-                default:
+                case "None":
                     AssignAlgoValues(false, false, false, false, false, false);
                     break;
             }

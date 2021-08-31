@@ -16,11 +16,13 @@
         public const string wallNodeName = "Wall Node: ";
         public const string visitedNodeName = "Visited Node: ";
         public const string shortestPathNodeName = "Shortest-Path Node: ";
+        public const string weightNodeName = "Weight Node:";
 
         public const string clearBoardName = "Clear Board";
         public const string visualizeName = "Visulize";
         public const string addBombName = "Add Bomb";
         public const string removeBombName = "Remove Bomb";
+        public const string informationWeightNode = "Information";
 
         public const string randomMazeName = "Random Maze";
         public const string recursiveMazeNamze = "Recursive Maze";
