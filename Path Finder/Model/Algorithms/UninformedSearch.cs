@@ -8,5 +8,7 @@ namespace Path_Finder.Model.Algorithms
 {
     abstract class UninformedSearch : GraphSearch
     {
+        protected int[] directionD1 = { -1, 1, 0, 0};
+        protected int[] directionD2 = { 0, 0, 1, -1};
     }
 }

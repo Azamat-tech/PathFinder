@@ -20,5 +20,7 @@
 
         public const int BOMBXSQUARE = (STARTXSQUARE + ENDXSQUARE) / 2;
         public const int BOMBQSQUARE = YSQUARE / 2;
+
+        public const int WEIGHT = 3;
     }
 }

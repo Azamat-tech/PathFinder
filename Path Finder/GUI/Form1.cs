@@ -21,15 +21,13 @@ namespace Path_Finder.GUI
         private List<Position> pathToBomb = new List<Position>();
         private List<Position> allPathToBombVisited = new List<Position>();
 
-        private readonly Timer timer;
-
         private readonly Pen pen = new Pen(Brushes.Gray, 2);
         private readonly StringFormat format = new StringFormat();
         private readonly Font font = new Font("Times New Roman", 11);
         private readonly Board board = new Board();
 
         private bool isVisualize;
-        private bool isMouseDown, isStartMove, isEndMove, isWallMove, isBombMove, isWeightMove;
+        private bool isMouseDown, isStartMove, isEndMove, isWallMove, isBombMove;
 
         private readonly Button clearButton;
         private readonly Button addRemoveButton;
@@ -39,12 +37,6 @@ namespace Path_Finder.GUI
         {
             InitializeComponent();
             KeyPreview = true;
-
-            #region Initialize Timer
-            timer = new Timer { Interval = 50 };
-            timer.Enabled = true;
-            timer.Tick += new EventHandler(OnTimerEvent);
-            #endregion
 
             #region Adding menu
 
@@ -312,13 +304,22 @@ namespace Path_Finder.GUI
             label.AutoSize = true;
         }
 
+        private void ClearAllPaths()
+        {
+            if (board.BombSet)
+            {
+                pathToBomb.Clear();
+                allPathToBombVisited.Clear();
+            }
+            path.Clear();
+            allVisitedPositions.Clear();
+        }
+
         private void ClearBoard(Object sender, EventArgs args)
         {
             currentAlgorithm = "";
-            path.Clear();
-            pathToBomb.Clear();
-            allPathToBombVisited.Clear();
-            allVisitedPositions.Clear();
+            
+            ClearAllPaths();
 
             isVisualize = false;
             board.SetAlgorithm("None");
@@ -330,7 +331,10 @@ namespace Path_Finder.GUI
 
         private void AddBomb(Object sender, EventArgs args)
         {
+            ClearAllPaths();
+
             Position bombPosition = board.GetBombPosition();
+
             if(!board.IsTaken(bombPosition.x, bombPosition.y))
             {
                 board.AddBomb();
@@ -462,11 +466,11 @@ namespace Path_Finder.GUI
                 {
                     if (wDown)
                     {
-                        board.SetWeightNode(position.x, position.y);
+                        board.SetCell(position.x, position.y, CellType.WEIGHT);
                     }
                     else
                     {
-                        board.SetWall(position.x, position.y);
+                        board.SetCell(position.x, position.y, CellType.WALL);
                     }
                 }
                 else if (board.IsWall(position.x, position.y) ||
@@ -474,9 +478,9 @@ namespace Path_Finder.GUI
                 {
                     board.SetCellToEmpty(position.x, position.y);
                 }
-                Invalidate();
-
                 isMouseDown = true;
+
+                Invalidate();
             }
         }
 
@@ -490,53 +494,46 @@ namespace Path_Finder.GUI
             
             if (isMouseDown && board.InsideTheBoard(e.X, e.Y))
             {
-                
-                if (!isStartMove && !isEndMove && !isBombMove)
+                if ((board.IsStartPosition(position.x, position.y) || isStartMove) &&
+                !isWallMove && !isBombMove && !wDown)
                 {
-                    if (wDown && board.IsEmpty(position.x, position.y))
+                    board.SetStartPosition(position.x, position.y);
+                    isStartMove = true;
+                }
+                else if ((board.IsEndPosition(position.x, position.y) || isEndMove) &&
+                    !isWallMove && !isBombMove && !wDown)
+                {
+                    board.SetEndPosition(position.x, position.y);
+                    isEndMove = true;
+                }
+                else if (board.BombSet)
+                {
+                    if ((board.IsBombPosition(position.x, position.y) || isBombMove) &&
+                        !isWallMove && !wDown)
                     {
-                        board.SetWeightNode(position.x, position.y, false);
-                        isWeightMove = true;
-                    } 
-                    else if (board.IsWeightNode(position.x, position.y))
-                    {
-                        board.SetCellToEmpty(position.x, position.y, false);
+                        board.SetBombPosition(position.x, position.y);
+                        isBombMove = true;
                     }
+                }
 
-
-                    if (board.IsEmpty(position.x, position.y))
+                else if (board.IsEmpty(position.x, position.y))
+                {
+                    if (wDown)
                     {
-                        board.SetWall(position.x, position.y, false);
+                        board.SetWallOrWeight(position.x, position.y, CellType.WEIGHT, false);
+                    }
+                    else if (!wDown && !isStartMove && !isEndMove && !isBombMove)
+                    {
+                        board.SetWallOrWeight(position.x, position.y, CellType.WALL, false);
                         isWallMove = true;
                     }
-                    else if (board.IsWall(position.x, position.y))
+                } else if (!board.IsEmpty(position.x, position.y))
+                {
+                    if (board.IsWeightNode(position.x, position.y) || 
+                        (board.IsWall(position.x, position.y) && !isStartMove && !isEndMove && 
+                        !isBombMove && !wDown))
                     {
                         board.SetCellToEmpty(position.x, position.y, false);
-                    }
-
-
-                } else
-                {
-                    if ((board.IsStartPosition(position.x, position.y) || isStartMove) &&
-                    !isWallMove && !isBombMove)
-                    {
-                        board.SetStartPosition(position.x, position.y);
-                        isStartMove = true;
-                    }
-                    else if ((board.IsEndPosition(position.x, position.y) || isEndMove) &&
-                        !isWallMove && !isBombMove)
-                    {
-                        board.SetEndPosition(position.x, position.y);
-                        isEndMove = true;
-                    }
-                    else if (board.BombSet)
-                    {
-                        if ((board.IsBombPosition(position.x, position.y) || isBombMove) &&
-                            !isWallMove)
-                        {
-                            board.SetBombPosition(position.x, position.y);
-                            isBombMove = true;
-                        }
                     }
                 }
                 Invalidate();
@@ -544,7 +541,7 @@ namespace Path_Finder.GUI
         }
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            isMouseDown = isStartMove = isEndMove = isWallMove = isBombMove = isWeightMove = false;
+            isMouseDown = isStartMove = isEndMove = isWallMove = isBombMove = false;
         }
         #endregion
 
@@ -631,33 +628,27 @@ namespace Path_Finder.GUI
             g.DrawRectangle(pen, rect);
         }
         
-        private void DrawPathHelper(Graphics g, List<Position> passedList, Brush color)
+        private void DrawPosition(Graphics g, Position p, Brush color)
         {
-            Rectangle r;
-            int x, y;
-            int valueX, valueY;
+            int valueX = p.x * BoardConstants.SQUARE + BoardConstants.MARGIN;
+            int valueY = p.y * BoardConstants.SQUARE + ViewConstants.LEFTOVER;
 
-            for (int i = 0; i < passedList.Count; i++)
-            {
-                x = passedList[i].x;
-                y = passedList[i].y;
-                valueX = x * BoardConstants.SQUARE + BoardConstants.MARGIN;
-                valueY = y * BoardConstants.SQUARE + ViewConstants.LEFTOVER;
-
-                if (!board.InsideTheBoard(valueX, valueY) || board.IsTaken(x, y))
-                {
-                    continue;
-                }
-
-                r = new Rectangle
+            Rectangle r = new Rectangle
                     (
                         valueX, valueY,
                         BoardConstants.SQUARE, BoardConstants.SQUARE
                     );
+            g.FillRectangle(color, r);
+        }
 
-                g.FillRectangle(color, r);
+        private void DrawPathHelper(Graphics g, List<Position> passedList, Brush color)
+        {
+            for (int i = 0; i < passedList.Count; i++)
+            {
+                DrawPosition(g, passedList[i], color);
             }
         }
+
 
         private void DrawAllVisitedPositions(PaintEventArgs e, Graphics g)
         {
@@ -668,7 +659,7 @@ namespace Path_Finder.GUI
 
                 DrawPathHelper(g, allVisitedPositions, Brushes.MediumOrchid);
 
-                DrawPathHelper(g, pathToBomb, Brushes.Yellow);
+                DrawPathHelper(g, pathToBomb, Brushes.Tomato);
             } else
             {
                 DrawPathHelper(g, allVisitedPositions, Brushes.PowderBlue);
@@ -797,7 +788,7 @@ namespace Path_Finder.GUI
                 (
                     posX, posY, BoardConstants.SQUARE, BoardConstants.SQUARE
                 );
-            g.FillRectangle(Brushes.Yellow, path);
+            g.FillRectangle(Brushes.Tomato, path);
         }
 
         private void DrawVisitedNodes(Graphics g, int posX, int PosY, 

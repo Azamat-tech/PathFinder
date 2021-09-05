@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using Path_Finder.Grid;
-
+                                                                                                                 
 namespace Path_Finder.Model.Algorithms
 {
     public enum Algorithm
@@ -14,9 +14,6 @@ namespace Path_Finder.Model.Algorithms
         public List<Position> allVisistedPositions = new List<Position>();
 
         protected bool reached;
-
-        protected int[] directionD1 = { -1, 1, 0, 0, 1, -1, 1, -1 };
-        protected int[] directionD2 = { 0, 0, 1, -1, -1, 1, 1, -1 };
 
         /// <summary>
         /// Search function returns the List of the positions from the start to 

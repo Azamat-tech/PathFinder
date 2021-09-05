@@ -15,7 +15,7 @@
         public const string bombNodeName = "Bomb Node: ";
         public const string wallNodeName = "Wall Node: ";
         public const string visitedNodeName = "Visited Node: ";
-        public const string shortestPathNodeName = "Shortest-Path Node: ";
+        public const string shortestPathNodeName = "Shortest-Path Node:";
         public const string weightNodeName = "Weight Node:";
 
         public const string clearBoardName = "Clear Board";

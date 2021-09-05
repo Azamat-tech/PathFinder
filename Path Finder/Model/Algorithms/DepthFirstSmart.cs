@@ -41,6 +41,11 @@ namespace Path_Finder.Model.Algorithms
                 }
 
                 distance = Heuristic.CalculateEuclideanDistanceHeuristic(endPosition, neighbour);
+                // if the node is WEIGHTNODE then add extra WEIGHT to the distance 
+                if (grid[neighbour.y, neighbour.x].type == CellType.WEIGHT)
+                {
+                    distance += BoardConstants.WEIGHT;
+                }
 
                 grid[neighbour.y, neighbour.x].visited = true;
                 priorityQueue.Insert(neighbour, distance);

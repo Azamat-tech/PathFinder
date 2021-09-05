@@ -21,7 +21,7 @@ namespace Path_Finder.Model.Algorithms
         /// <param name="grid"></param>
         public sealed override void NeighbourTraversal(Position current, ref Cell[,] grid)
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 8   ; i++)
             {
                 Position neighbour = new Position
                    (
@@ -52,6 +52,11 @@ namespace Path_Finder.Model.Algorithms
                     neighbour.Gcost = current.Gcost + 2;
                 }
                 neighbour.Hcost = Heuristic.CalculateManhattanDistanceHeuristic(neighbour, endPosition);
+                // if the node is WEIGHTNODE then add extra WEIGHT to the distance 
+                if (grid[neighbour.y, neighbour.x].type == CellType.WEIGHT)
+                {
+                    neighbour.Hcost += BoardConstants.WEIGHT;
+                }
 
                 grid[neighbour.y, neighbour.x].visited = true;
                 priorityQueue.Insert(neighbour, neighbour.Fcost);

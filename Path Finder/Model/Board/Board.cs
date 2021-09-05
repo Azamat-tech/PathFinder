@@ -38,7 +38,7 @@ namespace Path_Finder.Grid
             {
                 for (int j = 0; j < BoardConstants.COLUMNSIZE; j++)
                 {
-                    SetCell(i, j, CellType.EMPTY, false);
+                    SetCell(j, i, CellType.EMPTY, false);
                 }
             }
             SetStartPosition(BoardConstants.STARTXSQUARE, BoardConstants.YSQUARE);
@@ -155,13 +155,13 @@ namespace Path_Finder.Grid
 
         #region Setting the Cell
 
-        public void SetCell(int row, int column, CellType givenType, bool isVisited = false)
+        public void SetCell(int posX, int posY, CellType givenType, bool isVisited = false)
         {
-            grid[row, column] = new Cell
+            grid[posY, posX] = new Cell
             {
                 // Did not define the parent property of the Cell
                 // as it does not have any for now.
-                position = new Position(column, row),
+                position = new Position(posX, posY),
                 type = givenType,
                 visited = isVisited
             };
@@ -171,12 +171,14 @@ namespace Path_Finder.Grid
         {
             if (IsEmpty(posX, posY))
             {
+
                 if (grid[startPosition.y, startPosition.x].type == CellType.START)
                 {
-                    SetCell(startPosition.y, startPosition.x, CellType.EMPTY);
+                    SetCell(startPosition.x, startPosition.y, CellType.EMPTY);
                 }
-                SetCell(posY, posX, CellType.START);
+                SetCell(posX, posY, CellType.START);
                 startPosition = new Position(posX, posY);
+
             }
         }
 
@@ -186,9 +188,9 @@ namespace Path_Finder.Grid
             {
                 if (grid[endPosition.y, endPosition.x].type == CellType.END)
                 {
-                    SetCell(endPosition.y, endPosition.x, CellType.EMPTY);
+                    SetCell(endPosition.x, endPosition.y, CellType.EMPTY);
                 }
-                SetCell(posY, posX, CellType.END);
+                SetCell(posX, posY, CellType.END);
                 endPosition = new Position(posX, posY);
             }
         }
@@ -197,55 +199,40 @@ namespace Path_Finder.Grid
         {
             if (IsEmpty(posX, posY))
             {
-                SetCell(bombPosition.y, bombPosition.x, CellType.EMPTY);
-                SetCell(posY, posX, CellType.BOMB);
+                SetCell(bombPosition.x, bombPosition.y, CellType.EMPTY);
+                SetCell(posX, posY, CellType.BOMB);
                 bombPosition = new Position(posX, posY);
             }
         }
 
-        public void SetWall(int posX, int posY, bool justPress = true)
+        public void SetWallOrWeight(int posX, int posY, CellType type, bool justPress = true)
         {
             if (justPress)
             {
-                SetCell(posY, posX, CellType.WALL);
+                SetCell(posX, posY, type);
             }
             else
             {
                 if (previousPosition.x != posX || previousPosition.y != posY)
                 {
-                    SetCell(posY, posX, CellType.WALL);
+                    SetCell(posX, posY, type);
                     previousPosition = new Position(posX, posY);
                 }
             }
         }
 
-        public void SetWeightNode(int posX, int posY, bool justPress = true)
-        {
-            if (justPress)
-            {
-                SetCell(posY, posX, CellType.WEIGHT);
-            }
-            else
-            {
-                if (previousPosition.x != posX || previousPosition.y != posY)
-                {
-                    SetCell(posY, posX, CellType.WEIGHT);
-                    previousPosition = new Position(posX, posY);
-                }
-            }
-        }
         #endregion
         public void SetCellToEmpty(int posX, int posY, bool justPress = true)
         {
             if (justPress)
             {
-                SetCell(posY, posX, CellType.EMPTY);
+                SetCell(posX, posY, CellType.EMPTY);
             }
             else
             {
                 if (previousPosition.x != posX || previousPosition.y != posY)
                 {
-                    SetCell(posY, posX, CellType.EMPTY);
+                    SetCell(posX, posY, CellType.EMPTY);
                     previousPosition = new Position(posX, posY);
                 }
             }
@@ -274,7 +261,7 @@ namespace Path_Finder.Grid
                 {
                     if (grid[i, j].type != CellType.EMPTY || grid[i, j].visited)
                     {
-                        SetCell(i, j, CellType.EMPTY, false);
+                        SetCell(j, i, CellType.EMPTY, false);
                     }
                 }
             }
@@ -295,7 +282,7 @@ namespace Path_Finder.Grid
 
         public void RemoveBomb()
         {
-            SetCell(bombPosition.y, bombPosition.x, CellType.EMPTY);
+            SetCell(bombPosition.x, bombPosition.y, CellType.EMPTY);
             // Set the bomb to its original spot
             bombPosition = new Position((BoardConstants.STARTXSQUARE + BoardConstants.ENDXSQUARE) / 2,
                                                                         BoardConstants.YSQUARE / 2);
@@ -306,7 +293,7 @@ namespace Path_Finder.Grid
         {
             if (!IsTakenByStartAndEnd(bombPosition.x, bombPosition.y))
             {
-                SetCell(bombPosition.y, bombPosition.x, CellType.BOMB);
+                SetCell( bombPosition.x, bombPosition.y, CellType.BOMB);
                 BombSet = true;
             }
         }
