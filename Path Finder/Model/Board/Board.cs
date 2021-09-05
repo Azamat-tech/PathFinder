@@ -4,6 +4,13 @@ using System.Collections.Generic;
 using Path_Finder.Constants;
 using Path_Finder.Model.Algorithms;
 
+/*
+1) Extension methods - Heuristics
+2) Generic Types - PriorityQueue\BinaryHeap
+3) LINQ - View\Joining to lists 
+4) Tuple features - Graph Search 
+5) 
+*/
 namespace Path_Finder.Grid
 {
     class Board
@@ -221,7 +228,6 @@ namespace Path_Finder.Grid
             }
         }
 
-        #endregion
         public void SetCellToEmpty(int posX, int posY, bool justPress = true)
         {
             if (justPress)
@@ -237,7 +243,8 @@ namespace Path_Finder.Grid
                 }
             }
         }
-        
+        #endregion
+
         private void RemoveAllWalls()
         {
             for (int i = 0; i < BoardConstants.ROWSIZE; i++)
@@ -434,7 +441,8 @@ namespace Path_Finder.Grid
         #endregion
 
         #region Working with Algorithms 
-        private void AssignAlgoValues(bool bBFS, bool bDFS, bool bDIJKSTRA, bool bASTARE, bool bASTARM, bool bSMARTDFS)
+        private void AssignAlgoValues(bool bBFS, bool bDFS, bool bDIJKSTRA, bool bASTARE, 
+            bool bASTARM, bool bSMARTDFS)
         {
             (bfs, dfs, dijkstra, aStarEuclidean, aStarManhattan, smartDFS) =
                 (bBFS, bDFS, bDIJKSTRA, bASTARE, bASTARM, bSMARTDFS);

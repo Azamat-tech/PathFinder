@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Path_Finder.Grid;
 using Path_Finder.Constants;
+using System.Linq;
 
 namespace Path_Finder.GUI
 {
@@ -29,140 +30,12 @@ namespace Path_Finder.GUI
         private bool isVisualize;
         private bool isMouseDown, isStartMove, isEndMove, isWallMove, isBombMove;
 
-        private readonly Button clearButton;
-        private readonly Button addRemoveButton;
-        private readonly Button visualizeButton;
-
         public Form1()
         {
             InitializeComponent();
-            KeyPreview = true;
-
-            #region Adding menu
-
-            ToolStripMenuItem[] aStarMethods =
-{
-                new ToolStripMenuItem("A* Euclidean method", null, AStarEuclidean),
-                new ToolStripMenuItem("A* Manhattan method", null, AStarManhattan)
-            };
-
-            ToolStripMenuItem[] algorithms =
-            {
-                new ToolStripMenuItem("Breadth-First Search", null, BFS),
-                new ToolStripMenuItem("Depth-First Search", null, DFS),
-                new ToolStripMenuItem("Dijkstra's Algorithm", null, Dijkstra),
-                new ToolStripMenuItem("Depth-First Search Smart", null, SmartDFS),
-                new ToolStripMenuItem("A* Search", null, aStarMethods)
-            };
-
-            ToolStripMenuItem[] mazeGenerators =
-            {
-                new ToolStripMenuItem("Random Maze", null, CallRandomMaze),
-                new ToolStripMenuItem("Recursive Division", null, CallRecursiveMaze),
-            };
-
-            ToolStripMenuItem[] mainItems =
-            {
-                new ToolStripMenuItem("Algorithms", null, algorithms),
-                new ToolStripMenuItem("Maze & Pattern", null, mazeGenerators),
-            };
-
-            MenuStrip menu = new MenuStrip();
-
-            foreach (ToolStripMenuItem item in mainItems)
-            {
-                menu.Items.Add(item);
-            }
-            
-            Controls.Add(menu);
-
-            #endregion
-
-            #region Adding Buttons
-            clearButton = CreateButton
-            (
-                ViewConstants.clearBoardName, 9 * ViewConstants.BUTTONWIDTH + 
-                3 * BoardConstants.SQUARE, BoardConstants.MARGIN + BoardConstants.SQUARE + 2,
-                ViewConstants.BUTTONWIDTH, ViewConstants.BUTTONHEIGHT
-            );
-
-            addRemoveButton = CreateButton
-            (
-                ViewConstants.addBombName, 10 * ViewConstants.BUTTONWIDTH + 
-                3 * BoardConstants.SQUARE, BoardConstants.MARGIN + BoardConstants.SQUARE + 2,
-                ViewConstants.BUTTONWIDTH, ViewConstants.BUTTONHEIGHT
-            );
-
-            visualizeButton = CreateButton
-            (
-                ViewConstants.visualizeName, 11 * ViewConstants.BUTTONWIDTH + 
-                3 * BoardConstants.SQUARE, BoardConstants.MARGIN + BoardConstants.SQUARE + 2,
-                ViewConstants.BUTTONWIDTH, ViewConstants.BUTTONHEIGHT
-            );
-            #endregion
-
-            #region Adding Labels
-
-            CreateTextLabel
-                (
-                    ViewConstants.startingNodeName, 2 * BoardConstants.MARGIN, 
-                    2 * BoardConstants.SQUARE + BoardConstants.MARGIN,
-                    ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT
-                );
-
-            CreateTextLabel
-                (
-                    ViewConstants.targetNodeName, 
-                    3 * BoardConstants.MARGIN + BoardConstants.SQUARE + ViewConstants.LABELWIDTH, 
-                    2 * BoardConstants.SQUARE + BoardConstants.MARGIN, 
-                    ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT
-                );
-            
-            CreateTextLabel
-                (
-                    ViewConstants.bombNodeName, 
-                    3 * BoardConstants.MARGIN + 2 * BoardConstants.SQUARE + 2 * ViewConstants.LABELWIDTH, 
-                    2 * BoardConstants.SQUARE + BoardConstants.MARGIN, ViewConstants.LABELWIDTH, 
-                    ViewConstants.LABELHEIGHT
-                );
-            
-            CreateTextLabel
-                (
-                    ViewConstants.wallNodeName, 
-                    3 * BoardConstants.MARGIN + 3 * BoardConstants.SQUARE + 3 * ViewConstants.LABELWIDTH,
-                    2 * BoardConstants.SQUARE + BoardConstants.MARGIN, ViewConstants.LABELWIDTH, 
-                    ViewConstants.LABELHEIGHT
-                );
-            
-            CreateTextLabel
-                (
-                    ViewConstants.visitedNodeName, 
-                    BoardConstants.MARGIN + 4 * BoardConstants.SQUARE + 4 * ViewConstants.LABELWIDTH,
-                    2 * BoardConstants.SQUARE + BoardConstants.MARGIN, 
-                    ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT
-                );
-            
-            CreateTextLabel
-                (
-                    ViewConstants.shortestPathNodeName, 
-                    8 * BoardConstants.MARGIN + 5 * BoardConstants.SQUARE + 5 * ViewConstants.LABELWIDTH,
-                    2 * BoardConstants.SQUARE + BoardConstants.MARGIN, 
-                    ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT
-                );
-
-            CreateTextLabel
-            (
-                ViewConstants.weightNodeName, 5 *
-                BoardConstants.SQUARE + 7 * ViewConstants.LABELWIDTH, 2 * BoardConstants.SQUARE +
-                BoardConstants.MARGIN, ViewConstants.LABELWIDTH, ViewConstants.LABELHEIGHT
-            );
-            #endregion
-
         }
 
         #region Algorithm Events
-
-
         private void BFS(object sender, EventArgs args)
         {
             currentAlgorithm = "BFS";
@@ -258,6 +131,7 @@ namespace Path_Finder.GUI
         }
         #endregion
 
+        #region Creating Button and Label on Form
         private Button CreateButton(string name, int posX, int posY, int width, int height)
         {
             Button button = new Button();
@@ -284,10 +158,6 @@ namespace Path_Finder.GUI
                 button.Click += new EventHandler(Visualize);
                 button.BackColor = Color.Red;
             } 
-            else if (name == ViewConstants.informationWeightNode)
-            {
-                button.Click += new EventHandler(InformAboutWeightNode);
-            }
             return button;
         }
 
@@ -303,6 +173,9 @@ namespace Path_Finder.GUI
             label.Font = font;
             label.AutoSize = true;
         }
+        #endregion
+
+        #region Button Events
 
         private void ClearAllPaths()
         {
@@ -387,7 +260,7 @@ namespace Path_Finder.GUI
                     (path, allVisitedPositions) = board.GetSearchPath(board.GetBombPosition(),
                                                   board.GetEndPosition());
 
-                    pathToBomb.AddRange(path);
+                    path = (from p in pathToBomb.Union(path) select p).ToList();
                 }
 
                 if (!board.BombSet)
@@ -411,26 +284,7 @@ namespace Path_Finder.GUI
                 Invalidate();
             }
         }
-
-        private void InformAboutWeightNode(Object sender, EventArgs e)
-        {
-            Bitmap bitmap1 = Bitmap.FromHicon(SystemIcons.Information.Handle);
-            Graphics formGraphics = this.CreateGraphics();
-            GraphicsUnit units = GraphicsUnit.Point;
-
-            RectangleF bmpRectangleF = bitmap1.GetBounds(ref units);
-            Rectangle bmpRectangle = Rectangle.Round(bmpRectangleF);
-            formGraphics.DrawRectangle(Pens.Blue, bmpRectangle);
-            formGraphics.Dispose();
-        }
-
-        private void OnTimerEvent(Object sender, EventArgs args)
-        {
-            if (isVisualize)
-            {
-                Invalidate();
-            }
-        }
+        #endregion
 
         #region Keyboard Events
         protected override void OnKeyDown(KeyEventArgs e)
@@ -545,7 +399,7 @@ namespace Path_Finder.GUI
         }
         #endregion
 
-       
+        #region Paint Events
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -918,5 +772,7 @@ namespace Path_Finder.GUI
             }
 
         }
+
+        #endregion
     }
 }
